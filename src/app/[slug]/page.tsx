@@ -1,0 +1,343 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { connection } from "next/server";
+import { wedding } from "@/config/wedding";
+import { getInvitation, listWishes, type Wish } from "@/lib/data";
+import { InvitationShell } from "@/components/invitation-shell";
+import { Countdown } from "@/components/countdown";
+import { RsvpForm } from "@/components/rsvp-form";
+import { WishForm } from "@/components/wish-form";
+import { Divider, Lantern, Mosque, Stars } from "@/components/ornaments";
+import { rsvpAction, wishAction } from "./actions";
+
+// Every link is personal and shows live RSVPs/wishes, so render on each request.
+export const instant = false;
+
+const couple = `${wedding.groom.shortName} & ${wedding.bride.shortName}`;
+
+export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const inv = await getInvitation(slug);
+  return {
+    title: inv ? `${inv.name} — The Wedding of ${couple}` : `The Wedding of ${couple}`,
+  };
+}
+
+export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
+  await connection();
+  const { slug } = await params;
+  const [invitation, wishes] = await Promise.all([getInvitation(slug), listWishes()]);
+  if (!invitation) notFound();
+
+  return (
+    <InvitationShell guestName={invitation.name} coupleNames={couple}>
+      <main className="overflow-x-hidden bg-cream">
+        <Hero />
+        <Verse />
+        <Couple />
+        <Events />
+        <SaveTheDate />
+
+        <Section id="rsvp" dark title="RSVP" subtitle="Kindly let us know if you can join us">
+          <RsvpForm
+            action={rsvpAction.bind(null, slug)}
+            guestName={invitation.name}
+            plusOneAllowed={invitation.plusOneAllowed}
+            current={{
+              attending: invitation.attending,
+              bringingPlusOne: invitation.bringingPlusOne,
+              plusOneName: invitation.plusOneName,
+            }}
+          />
+        </Section>
+
+        <Section id="wishes" title="Du'a & Wishes" subtitle="Send your prayers and best wishes to the couple">
+          <WishForm action={wishAction.bind(null, slug)} guestName={invitation.name} />
+          <WishList wishes={wishes} />
+        </Section>
+
+        <Closing />
+      </main>
+    </InvitationShell>
+  );
+}
+
+function Section({
+  id,
+  title,
+  subtitle,
+  dark = false,
+  wide = false,
+  children,
+}: {
+  id?: string;
+  title: string;
+  subtitle?: string;
+  dark?: boolean;
+  wide?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <section
+      id={id}
+      className={`scroll-mt-4 px-5 py-16 text-center sm:px-8 sm:py-24 ${dark ? "islamic-pattern bg-emerald-deep text-cream" : "islamic-pattern-light bg-cream text-ink"}`}
+    >
+      <div className={`mx-auto ${wide ? "max-w-4xl" : "max-w-lg"}`}>
+        <div className="reveal" data-anim="zoom">
+          <h2 className={`font-script text-5xl sm:text-6xl ${dark ? "text-gold" : "text-emerald"}`}>{title}</h2>
+          {subtitle && <p className={`mt-2 text-lg ${dark ? "text-cream/70" : "text-ink/70"}`}>{subtitle}</p>}
+          <Divider className="my-6" />
+        </div>
+        <div className="reveal" style={{ animationDelay: "0.15s" }}>
+          {children}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Hero() {
+  return (
+    <section
+      id="home"
+      className="islamic-pattern relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-emerald-deep px-6 pb-48 text-center text-cream sm:pb-64"
+    >
+      <Stars />
+      <Lantern className="sway absolute left-6 top-0 h-28 w-10 text-gold sm:left-[12%] sm:h-40 sm:w-14" />
+      <Lantern className="sway absolute right-6 top-0 h-20 w-8 text-gold [animation-delay:-2s] sm:right-[12%] sm:h-32 sm:w-12" />
+      <div className="relative z-10">
+        <p className="reveal text-sm uppercase tracking-[0.35em] text-gold-light/80 sm:text-base">The Wedding of</p>
+        <h1 className="reveal mt-3 font-script text-7xl text-gold sm:text-9xl" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
+          {couple}
+        </h1>
+        <p className="reveal mt-5 text-xl sm:text-2xl" style={{ animationDelay: "0.4s" }}>
+          {wedding.dateLabel}
+        </p>
+      </div>
+      <Mosque className="absolute bottom-0 left-1/2 w-[520px] max-w-[130%] -translate-x-1/2 text-emerald-soft sm:w-[760px]" />
+      <a
+        href="#verse"
+        className="bounce-down absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-28"
+        aria-label="Scroll down"
+      >
+        Scroll
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </a>
+    </section>
+  );
+}
+
+function Verse() {
+  return (
+    <section id="verse" className="islamic-pattern-light bg-cream px-6 py-16 text-center sm:py-24">
+      <div className="mx-auto max-w-2xl">
+        <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-emerald sm:text-3xl sm:leading-loose" data-anim="zoom">
+          وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ
+        </p>
+        <Divider className="my-6" />
+        <div className="reveal" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg italic leading-relaxed text-ink/80 sm:text-xl">
+            &ldquo;And among His signs is that He created for you spouses from among yourselves so that you may find
+            tranquility in them, and He placed between you affection and mercy. Indeed, in that are signs for people
+            who reflect.&rdquo;
+          </p>
+          <p className="mt-3 font-semibold text-emerald">QS. Ar-Rum: 21</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Couple() {
+  const person = (p: typeof wedding.groom, anim: "left" | "right") => (
+    <div className="reveal flex flex-col items-center" data-anim={anim}>
+      <div className="arch flex h-48 w-40 items-center justify-center border-2 border-gold bg-emerald p-1.5 shadow-xl shadow-emerald/20 transition duration-500 hover:-translate-y-1 sm:h-60 sm:w-48">
+        <div className="arch islamic-pattern flex h-full w-full items-center justify-center bg-emerald-deep font-script text-6xl text-gold sm:text-7xl">
+          {p.shortName[0]}
+        </div>
+      </div>
+      <h3 className="mt-5 text-2xl font-semibold text-emerald sm:text-3xl">{p.fullName}</h3>
+      <p className="mt-1 text-ink/70">{p.parents}</p>
+    </div>
+  );
+
+  return (
+    <section id="couple" className="islamic-pattern-light scroll-mt-4 bg-cream px-6 pb-16 text-center sm:pb-24">
+      <div className="reveal mx-auto max-w-xl">
+        <p className="font-arabic text-xl text-emerald sm:text-2xl">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
+        <p className="mt-2 font-semibold text-emerald">Assalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
+        <p className="mt-4 text-lg leading-relaxed text-ink/80">
+          With gratitude for the blessings of Allah SWT, we humbly request the honour of your presence and du&apos;a at
+          the wedding of our beloved children:
+        </p>
+      </div>
+      <div className="mx-auto mt-12 flex max-w-4xl flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
+        {person(wedding.groom, "left")}
+        <p className="reveal font-script text-6xl text-gold md:mt-24" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
+          &amp;
+        </p>
+        {person(wedding.bride, "right")}
+      </div>
+    </section>
+  );
+}
+
+function Events() {
+  return (
+    <section id="event" className="islamic-pattern scroll-mt-4 bg-emerald-deep px-5 py-16 text-center text-cream sm:px-8 sm:py-24">
+      <div className="mx-auto max-w-4xl">
+        <div className="reveal" data-anim="zoom">
+          <h2 className="font-script text-5xl text-gold sm:text-6xl">The Celebration</h2>
+          <p className="mt-2 text-lg text-cream/70">Insya Allah, it will be held on</p>
+          <Divider className="my-6" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {wedding.events.map((e, i) => (
+            <div
+              key={e.title}
+              className="reveal rounded-t-[999px] rounded-b-2xl border border-gold/50 bg-emerald/60 px-6 pb-7 pt-14 transition duration-500 hover:-translate-y-1 hover:border-gold"
+              data-anim={i % 2 === 0 ? "left" : "right"}
+              style={{ animationDelay: `${0.15 * i}s` }}
+            >
+              <h3 className="font-script text-4xl text-gold">{e.title}</h3>
+              <p className="mt-3 text-lg">{wedding.dateLabel}</p>
+              <p className="text-lg text-gold-light">{e.time}</p>
+              <div className="mx-auto my-4 h-px w-20 bg-gold/50" />
+              <p className="text-xl font-semibold">{e.venue}</p>
+              <p className="mt-1 text-cream/70">{e.address}</p>
+              <a
+                href={e.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-flex items-center gap-2 rounded-full border border-gold px-5 py-2.5 text-gold-light transition hover:bg-gold hover:text-emerald-deep active:scale-95"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                  <path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z" />
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg>
+                Open in Google Maps
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SaveTheDate() {
+  const fmt = (iso: string) => new Date(iso).toISOString().replace(/[-:]|\.\d{3}/g, "");
+  const calendarUrl =
+    "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+    `&text=${encodeURIComponent(`Wedding of ${couple}`)}` +
+    `&dates=${fmt(wedding.date)}/${fmt(wedding.calendarEnd)}` +
+    `&location=${encodeURIComponent(`${wedding.events[0].venue}, ${wedding.events[0].address}`)}`;
+
+  return (
+    <section className="islamic-pattern bg-emerald px-5 py-16 text-center text-cream sm:py-24">
+      <div className="mx-auto max-w-lg">
+        <div className="reveal" data-anim="zoom">
+          <h2 className="font-script text-5xl text-gold sm:text-6xl">Counting the Days</h2>
+          <Divider className="my-6" />
+        </div>
+        <div className="reveal" style={{ animationDelay: "0.15s" }}>
+          <Countdown date={wedding.date} />
+          <a
+            href={calendarUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep transition hover:scale-105 hover:bg-gold-light active:scale-95"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M3 10h18M8 3v4M16 3v4" />
+            </svg>
+            Save the Date
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+function timeAgo(iso: string) {
+  const secs = (new Date(iso).getTime() - Date.now()) / 1000;
+  const units: [Intl.RelativeTimeFormatUnit, number][] = [
+    ["year", 31_536_000],
+    ["month", 2_592_000],
+    ["week", 604_800],
+    ["day", 86_400],
+    ["hour", 3_600],
+    ["minute", 60],
+  ];
+  for (const [unit, size] of units) {
+    if (Math.abs(secs) >= size) return rtf.format(Math.round(secs / size), unit);
+  }
+  return "just now";
+}
+
+function WishList({ wishes }: { wishes: Wish[] }) {
+  return (
+    <div className="mt-8 text-left">
+      <p className="mb-3 text-sm text-ink/60">
+        {wishes.length} {wishes.length === 1 ? "wish" : "wishes"}
+      </p>
+      <ul className="max-h-[480px] space-y-3 overflow-y-auto overscroll-contain pr-1">
+        {wishes.map((w) => (
+          <li key={w.id} className="pop-in flex gap-3 rounded-xl border border-emerald/10 bg-white/80 p-4 shadow-sm">
+            <span
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald font-semibold text-gold-light"
+              aria-hidden
+            >
+              {w.name.trim()[0]?.toUpperCase()}
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span className="font-semibold text-emerald">{w.name}</span>
+                {w.attending !== null && (
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs ${w.attending ? "bg-emerald/10 text-emerald" : "bg-ink/10 text-ink/70"}`}
+                  >
+                    {w.attending ? "Attending" : "Not attending"}
+                  </span>
+                )}
+                <span className="ml-auto text-xs text-ink/50">{timeAgo(w.createdAt)}</span>
+              </div>
+              <p className="mt-1.5 whitespace-pre-line break-words leading-relaxed text-ink/85">{w.message}</p>
+            </div>
+          </li>
+        ))}
+        {wishes.length === 0 && <li className="py-6 text-center text-ink/50">Be the first to send your wishes.</li>}
+      </ul>
+    </div>
+  );
+}
+
+function Closing() {
+  return (
+    <section className="islamic-pattern relative overflow-hidden bg-emerald-deep px-6 pb-80 pt-16 text-center text-cream sm:pb-[28rem] sm:pt-24">
+      <Stars />
+      <div className="relative z-10 mx-auto max-w-xl">
+        <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-gold-light sm:text-3xl" data-anim="zoom">
+          بَارَكَ ٱللَّٰهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ
+        </p>
+        <div className="reveal" style={{ animationDelay: "0.2s" }}>
+          <p className="mt-2 text-sm italic text-cream/70 sm:text-base">
+            May Allah bless you both, shower His blessings upon you, and unite you in goodness.
+          </p>
+          <Divider className="my-6" />
+          <p className="text-lg leading-relaxed text-cream/85">
+            It would be an honour and a joy for us if you could attend and give your blessings. Jazakumullahu khairan.
+          </p>
+          <p className="mt-6 font-semibold text-gold-light">Wassalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
+          <p className="mt-8 text-sm uppercase tracking-[0.3em] text-cream/60">With love,</p>
+          <p className="mt-2 font-script text-5xl text-gold sm:text-6xl">{couple}</p>
+        </div>
+      </div>
+      <Mosque className="absolute bottom-0 left-1/2 w-[520px] max-w-[130%] -translate-x-1/2 text-emerald-soft sm:w-[760px]" />
+    </section>
+  );
+}
