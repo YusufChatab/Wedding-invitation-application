@@ -149,8 +149,16 @@ export function startNatureAmbience(startMuted: boolean): Ambience | null {
 export function startAudioFile(src: string, startMuted: boolean): Ambience {
   const audio = new Audio(src);
   audio.loop = true;
-  audio.volume = 0.5;
   audio.muted = startMuted;
+
+  // Fade in over ~3s. (iPhones ignore volume changes, so there it simply starts.)
+  const target = 0.6;
+  audio.volume = 0;
+  const fade = setInterval(() => {
+    audio.volume = Math.min(target, audio.volume + target / 30);
+    if (audio.volume >= target) clearInterval(fade);
+  }, 100);
+
   void audio.play().catch(() => {});
   return {
     setMuted(next) {
@@ -164,6 +172,7 @@ export function startAudioFile(src: string, startMuted: boolean): Ambience {
       if (!audio.muted) void audio.play().catch(() => {});
     },
     dispose() {
+      clearInterval(fade);
       audio.pause();
       audio.src = "";
     },

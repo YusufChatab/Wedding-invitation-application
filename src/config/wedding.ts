@@ -38,5 +38,5 @@ export const wedding = {
 
   // Background sound. Leave empty for the built-in nature sounds, or put an
   // MP3 in the `public` folder and set e.g. "/nasheed.mp3".
-  backgroundMusic: "",
+  backgroundMusic: "/sounds/waterfall-birds.mp3",
 };
