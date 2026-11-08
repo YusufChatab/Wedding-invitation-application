@@ -14,8 +14,13 @@
   --font-arabic: var(--font-amiri);
 }
 
+/* Dark base on <html> too, so pulling past the top/bottom on phones never shows white. */
+html,
 body {
   background: var(--color-emerald-deep);
+}
+
+body {
   color: var(--color-ink);
   font-family: var(--font-cormorant), Georgia, serif;
 }

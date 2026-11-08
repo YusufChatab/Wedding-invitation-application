@@ -7,6 +7,7 @@ import { createPortal } from "react-dom";
 // Portalled to <body> because the animated sections around the forms keep a
 // transform, which would otherwise pin a fixed element inside that section.
 export function Toast({ ok, message }: { ok: boolean; message: string }) {
+  if (typeof document === "undefined" || !document.body) return null;
   return createPortal(
     <div
       role="status"

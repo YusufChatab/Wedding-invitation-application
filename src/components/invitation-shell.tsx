@@ -19,9 +19,14 @@ export function InvitationShell({
 }) {
   const [stage, setStage] = useState<Stage>("closed");
 
+  // Lock scrolling behind the cover. Mobile Safari ignores overflow on <body>
+  // alone, so lock <html> as well.
   useEffect(() => {
-    document.body.style.overflow = stage === "closed" ? "hidden" : "";
+    const value = stage === "closed" ? "hidden" : "";
+    document.documentElement.style.overflow = value;
+    document.body.style.overflow = value;
     return () => {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     };
   }, [stage]);
@@ -54,7 +59,8 @@ export function InvitationShell({
     <>
       {stage !== "open" && (
         <div
-          className={`cover islamic-pattern fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-emerald-deep px-6 pb-32 text-center text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
+          // 100lvh: still fills the screen when the phone's address bar hides.
+          className={`cover islamic-pattern fixed inset-x-0 top-0 z-50 flex h-[100lvh] flex-col items-center justify-center overflow-hidden bg-emerald-deep px-6 pb-32 text-center text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
         >
           <Stars />
           <Lantern className="sway absolute left-6 top-0 h-28 w-10 text-gold sm:left-16 sm:h-36 sm:w-14" />

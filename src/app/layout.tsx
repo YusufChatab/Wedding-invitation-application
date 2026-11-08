@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Amiri, Cormorant_Garamond, Great_Vibes } from "next/font/google";
 import { wedding } from "@/config/wedding";
 import "./globals.css";
@@ -24,6 +24,12 @@ const amiri = Amiri({
 export const metadata: Metadata = {
   title: `The Wedding of ${wedding.groom.shortName} & ${wedding.bride.shortName}`,
   description: `${wedding.dateLabel} · You are invited to celebrate with us.`,
+};
+
+// Colours the phone's browser bar to match the invitation instead of white.
+export const viewport: Viewport = {
+  themeColor: "#0b2b24",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
