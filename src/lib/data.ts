@@ -29,6 +29,15 @@ const anonKey = process.env.SUPABASE_ANON_KEY;
 
 export const isDemoMode = !url || !anonKey;
 
+// Demo data is for local previews only. On the live site, missing Supabase
+// settings must fail loudly instead of "saving" RSVPs into throwaway memory.
+function demoEnabled() {
+  if (isDemoMode && process.env.NODE_ENV === "production") {
+    throw new Error("SUPABASE_URL and SUPABASE_ANON_KEY are not set on the server.");
+  }
+  return isDemoMode;
+}
+
 let client: SupabaseClient | null = null;
 function db() {
   if (!client) {
@@ -38,7 +47,7 @@ function db() {
 }
 
 export async function getInvitation(slug: string): Promise<Invitation | null> {
-  if (isDemoMode) return demo.getInvitation(slug);
+  if (demoEnabled()) return demo.getInvitation(slug);
   const { data, error } = await db().rpc("get_invitation", { p_slug: slug });
   if (error) throw error;
   const row = data?.[0];
@@ -53,7 +62,7 @@ export async function getInvitation(slug: string): Promise<Invitation | null> {
 }
 
 export async function submitRsvp(slug: string, input: RsvpInput): Promise<void> {
-  if (isDemoMode) return demo.submitRsvp(slug, input);
+  if (demoEnabled()) return demo.submitRsvp(slug, input);
   const { error } = await db().rpc("submit_rsvp", {
     p_slug: slug,
     p_attending: input.attending,
@@ -64,13 +73,13 @@ export async function submitRsvp(slug: string, input: RsvpInput): Promise<void> 
 }
 
 export async function addWish(slug: string, message: string): Promise<void> {
-  if (isDemoMode) return demo.addWish(slug, message);
+  if (demoEnabled()) return demo.addWish(slug, message);
   const { error } = await db().rpc("add_wish", { p_slug: slug, p_message: message });
   if (error) throw error;
 }
 
 export async function listWishes(): Promise<Wish[]> {
-  if (isDemoMode) return demo.listWishes();
+  if (demoEnabled()) return demo.listWishes();
   const { data, error } = await db().rpc("list_wishes", { p_limit: 200 });
   if (error) throw error;
   return (data ?? []).map((w: Record<string, unknown>) => ({
