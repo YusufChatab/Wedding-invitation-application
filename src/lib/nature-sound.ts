@@ -145,36 +145,64 @@ export function startNatureAmbience(startMuted: boolean): Ambience | null {
   };
 }
 
-// Same controls for a looping audio file, if one is configured.
+// Background volume for an audio file (0–1). Lower = softer.
+const FILE_VOLUME = 0.35;
+
+// Same controls for a looping audio file, if one is configured. The file is
+// played through the Web Audio engine so volume and fade-in also work on
+// iPhones, which ignore the <audio> element's own volume setting.
 export function startAudioFile(src: string, startMuted: boolean): Ambience {
   const audio = new Audio(src);
   audio.loop = true;
-  audio.muted = startMuted;
+  let muted = startMuted;
 
-  // Fade in over ~3s. (iPhones ignore volume changes, so there it simply starts.)
-  const target = 0.6;
-  audio.volume = 0;
-  const fade = setInterval(() => {
-    audio.volume = Math.min(target, audio.volume + target / 30);
-    if (audio.volume >= target) clearInterval(fade);
-  }, 100);
+  const Ctx =
+    window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+  const ctx = Ctx ? new Ctx() : null;
+  const gain = ctx?.createGain();
+  if (ctx && gain) {
+    ctx.createMediaElementSource(audio).connect(gain).connect(ctx.destination);
+    gain.gain.value = 0;
+    if (!muted) gain.gain.linearRampToValueAtTime(FILE_VOLUME, ctx.currentTime + 3);
+  } else {
+    audio.volume = FILE_VOLUME;
+    audio.muted = muted;
+  }
+
+  function fadeTo(value: number, seconds: number) {
+    if (!ctx || !gain) {
+      audio.muted = value === 0;
+      return;
+    }
+    const now = ctx.currentTime;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(gain.gain.value, now);
+    gain.gain.linearRampToValueAtTime(value, now + seconds);
+  }
 
   void audio.play().catch(() => {});
   return {
     setMuted(next) {
-      audio.muted = next;
-      if (!next) void audio.play().catch(() => {});
+      muted = next;
+      if (!next) {
+        void ctx?.resume();
+        void audio.play().catch(() => {});
+      }
+      fadeTo(next ? 0 : FILE_VOLUME, 0.5);
     },
     pause() {
       audio.pause();
+      void ctx?.suspend();
     },
     resume() {
-      if (!audio.muted) void audio.play().catch(() => {});
+      if (muted) return;
+      void ctx?.resume();
+      void audio.play().catch(() => {});
     },
     dispose() {
-      clearInterval(fade);
       audio.pause();
       audio.src = "";
+      void ctx?.close();
     },
   };
 }
