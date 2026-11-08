@@ -173,3 +173,18 @@ select
 from invitations i
 left join rsvps r on r.invitation_id = i.id
 order by i.name;
+
+-- Wishes with guest names, for the dashboard (Table Editor → wishes_summary).
+create or replace view wishes_summary with (security_invoker = true) as
+select
+  i.name as guest,
+  i.slug,
+  case when r.attending is null then 'no reply yet'
+       when r.attending then 'attending'
+       else 'not attending' end as rsvp,
+  w.message,
+  w.created_at
+from wishes w
+join invitations i on i.id = w.invitation_id
+left join rsvps r on r.invitation_id = i.id
+order by w.created_at desc;
