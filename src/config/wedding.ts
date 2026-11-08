@@ -35,4 +35,8 @@ export const wedding = {
 
   // End time for the "Save the date" calendar entry.
   calendarEnd: "2027-02-14T14:00:00+07:00",
+
+  // Background sound. Leave empty for the built-in nature sounds, or put an
+  // MP3 in the `public` folder and set e.g. "/nasheed.mp3".
+  backgroundMusic: "",
 };

@@ -1,8 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { wedding } from "@/config/wedding";
+import { startAudioFile, startNatureAmbience, type Ambience } from "@/lib/nature-sound";
 import { BottomNav } from "./bottom-nav";
 import { Lantern, Mosque, Stars } from "./ornaments";
+import { SoundButton } from "./sound-button";
+
+const MUTE_KEY = "invitation-muted";
+
+function readMuted() {
+  try {
+    return localStorage.getItem(MUTE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function saveMuted(muted: boolean) {
+  try {
+    localStorage.setItem(MUTE_KEY, muted ? "1" : "0");
+  } catch {
+    // Private mode or blocked storage: just don't remember.
+  }
+}
 
 type Stage = "closed" | "opening" | "open";
 
@@ -18,6 +39,20 @@ export function InvitationShell({
   children: React.ReactNode;
 }) {
   const [stage, setStage] = useState<Stage>("closed");
+  const [muted, setMuted] = useState(false);
+  const [hasSound, setHasSound] = useState(false);
+  const sound = useRef<Ambience | null>(null);
+
+  // Pause the sound while the guest is in another tab or app.
+  useEffect(() => {
+    const onVisibility = () => (document.hidden ? sound.current?.pause() : sound.current?.resume());
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      sound.current?.dispose();
+      sound.current = null;
+    };
+  }, []);
 
   // Lock scrolling behind the cover. Mobile Safari ignores overflow on <body>
   // alone, so lock <html> as well.
@@ -53,6 +88,22 @@ export function InvitationShell({
     window.scrollTo({ top: 0 });
     setStage("opening");
     setTimeout(() => setStage("open"), 1100);
+
+    // Sound has to start inside the tap, or phones will block it.
+    const startMuted = readMuted();
+    setMuted(startMuted);
+    sound.current?.dispose();
+    sound.current = wedding.backgroundMusic
+      ? startAudioFile(wedding.backgroundMusic, startMuted)
+      : startNatureAmbience(startMuted);
+    setHasSound(sound.current !== null);
+  }
+
+  function toggleSound() {
+    const next = !muted;
+    setMuted(next);
+    saveMuted(next);
+    sound.current?.setMuted(next);
   }
 
   return (
@@ -98,6 +149,7 @@ export function InvitationShell({
       )}
       {children}
       {stage !== "closed" && <BottomNav />}
+      {stage !== "closed" && hasSound && <SoundButton muted={muted} onToggle={toggleSound} />}
     </>
   );
 }
