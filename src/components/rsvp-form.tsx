@@ -2,6 +2,7 @@
 
 import { startTransition, useActionState, useState } from "react";
 import type { FormState } from "@/app/[slug]/actions";
+import { SongketBand } from "./ornaments";
 import { Toast } from "./toast";
 
 type Current = { attending: boolean | null; bringingPlusOne: boolean; plusOneName: string | null };
@@ -13,8 +14,13 @@ type Props = {
   current: Current;
 };
 
+// Lighter maroon card so the form stands apart from the section background,
+// topped with a strip of songket.
+const card =
+  "overflow-hidden rounded-3xl border border-gold/50 bg-maroon px-5 pb-7 pt-7 shadow-2xl shadow-black/30 sm:px-8 sm:pb-8 sm:pt-8";
+
 const choice =
-  "flex-1 cursor-pointer rounded-xl border border-gold/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-maroon-deep has-[:checked]:font-semibold";
+  "flex-1 cursor-pointer rounded-xl border border-gold/40 bg-maroon-deep/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-maroon-deep has-[:checked]:font-semibold";
 
 export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) {
   const [state, formAction, pending] = useActionState(action, null);
@@ -40,11 +46,12 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
             const data = new FormData(e.currentTarget);
             startTransition(() => formAction(data));
           }}
-          className="pop-in space-y-5 text-left"
+          className={`${card} pop-in space-y-5 text-left`}
         >
+          <SongketBand className="relative -mx-5 -mt-7 mb-6 sm:-mx-8 sm:-mt-8" />
           <div>
             <label className="mb-1 block text-sm text-cream/70">Name</label>
-            <div className="rounded-xl border border-gold/30 bg-maroon/50 px-4 py-3 text-lg">{guestName}</div>
+            <div className="rounded-xl border border-gold/30 bg-maroon-deep/50 px-4 py-3 text-lg">{guestName}</div>
           </div>
 
           <fieldset>
@@ -80,7 +87,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
                   defaultValue={current.plusOneName ?? ""}
                   maxLength={100}
                   placeholder="Plus one's name (optional)"
-                  className="pop-in w-full rounded-xl border border-gold/30 bg-maroon/50 px-4 py-3 text-base text-cream placeholder:text-cream/40 focus:border-gold focus:outline-none"
+                  className="pop-in w-full rounded-xl border border-gold/30 bg-maroon-deep/50 px-4 py-3 text-base text-cream placeholder:text-cream/40 focus:border-gold focus:outline-none"
                 />
               )}
             </fieldset>
@@ -119,8 +126,9 @@ function Replied({ current, onChange }: { current: Current; onChange: () => void
   return (
     <div
       key={`${current.attending}-${current.bringingPlusOne}`}
-      className="pop-in rounded-3xl border border-gold/50 bg-maroon/60 px-6 py-8 shadow-xl shadow-black/20"
+      className={`${card} pop-in`}
     >
+      <SongketBand className="relative -mx-5 -mt-7 mb-6 sm:-mx-8 sm:-mt-8" />
       <span
         className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${coming ? "bg-gold text-maroon-deep" : "bg-cream/15 text-gold-light"}`}
         aria-hidden
