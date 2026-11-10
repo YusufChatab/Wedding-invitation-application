@@ -10,41 +10,6 @@ export function Divider({ className = "" }: { className?: string }) {
   );
 }
 
-export function Mosque({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 400 210" className={className} fill="currentColor" aria-hidden>
-      {/* minarets */}
-      {[30, 354].map((x) => (
-        <g key={x}>
-          <rect x={x} y="62" width="16" height="148" />
-          <rect x={x - 4} y="96" width="24" height="5" />
-          <rect x={x - 4} y="140" width="24" height="5" />
-          <path d={`M${x - 3} 62 L${x + 8} 26 L${x + 19} 62 Z`} />
-          <rect x={x + 7} y="14" width="2" height="12" />
-        </g>
-      ))}
-      {/* side domes */}
-      <path d="M78 150 Q78 112 105 102 Q132 112 132 150 Z" />
-      <path d="M268 150 Q268 112 295 102 Q322 112 322 150 Z" />
-      <rect x="104" y="90" width="2" height="12" />
-      <rect x="294" y="90" width="2" height="12" />
-      {/* main dome */}
-      <path d="M134 150 Q132 72 200 48 Q268 72 266 150 Z" />
-      <rect x="199" y="26" width="2" height="22" />
-      <path d="M206 16 a9 9 0 1 0 0 14 a7 7 0 1 1 0 -14 Z" />
-      {/* hall */}
-      <rect x="60" y="150" width="280" height="60" />
-      {/* doors and windows cut out with the background colour */}
-      <g className="text-maroon-deep" fill="currentColor" opacity="0.55">
-        <path d="M184 210 V182 Q184 166 200 160 Q216 166 216 182 V210 Z" />
-        {[96, 132, 252, 288].map((x) => (
-          <path key={x} d={`M${x} 196 V178 Q${x} 168 ${x + 8} 164 Q${x + 16} 168 ${x + 16} 178 V196 Z`} />
-        ))}
-      </g>
-    </svg>
-  );
-}
-
 // Fixed positions so server and client render the same markup.
 const starPositions = [
   [8, 18, 0], [22, 35, 1.2], [15, 62, 2.1], [32, 12, 0.6], [70, 15, 1.8], [85, 30, 0.3],
@@ -69,59 +34,84 @@ export function Stars({ className = "" }: { className?: string }) {
   );
 }
 
-export function Lantern({ className = "" }: { className?: string }) {
+// Five round petals around a centre, used by the vine and the garden.
+function Bloom({ x, y, r, petal = "", centre = "text-gold" }: { x: number; y: number; r: number; petal?: string; centre?: string }) {
   return (
-    <svg viewBox="0 0 40 110" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-      <line x1="20" y1="0" x2="20" y2="30" />
-      <path d="M14 30 h12 l4 8 h-20 z" fill="currentColor" />
-      <path d="M10 38 h20 l4 30 l-6 14 h-16 l-6 -14 z" />
-      <path d="M20 38 v44 M12 52 h16 M11 66 h18" strokeOpacity="0.6" />
-      <path d="M14 82 h12 l-6 10 z" fill="currentColor" />
-      <circle cx="20" cy="56" r="4" fill="currentColor" fillOpacity="0.5" stroke="none" />
+    <g className={petal}>
+      {[0, 72, 144, 216, 288].map((deg) => {
+        const a = ((deg - 90) * Math.PI) / 180;
+        return <circle key={deg} cx={+(x + Math.cos(a) * r).toFixed(2)} cy={+(y + Math.sin(a) * r).toFixed(2)} r={r * 0.75} fill="currentColor" />;
+      })}
+      <circle cx={x} cy={y} r={r * 0.55} fill="currentColor" className={centre} />
+    </g>
+  );
+}
+
+const leaf = (x: number, y: number, dir: 1 | -1) =>
+  `M${x} ${y} q${10 * dir} -8 ${16 * dir} 0 q${-6 * dir} 8 ${-16 * dir} 0 Z`;
+
+// A flowering vine hanging from the top edge, with leaves and blossoms.
+export function FlowerVine({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 44 150" className={className} aria-hidden>
+      <path d="M22 0 C30 20 14 36 22 56 C30 76 14 92 22 112" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <g fill="currentColor" fillOpacity="0.7">
+        {([[24, 14, 1], [19, 34, -1], [25, 62, 1], [19, 86, -1], [24, 100, 1]] as const).map(([x, y, d]) => (
+          <path key={y} d={leaf(x, y, d)} />
+        ))}
+      </g>
+      <Bloom x={17} y={46} r={4} petal="text-rose" />
+      <Bloom x={27} y={76} r={4} petal="text-blush" />
+      <Bloom x={22} y={122} r={7} petal="text-rose" centre="text-gold-light" />
+      <path d="M22 132 v8" stroke="currentColor" strokeWidth="1.2" />
+      <ellipse cx="22" cy="144" rx="3" ry="5" fill="currentColor" className="text-blush" />
     </svg>
   );
 }
 
-// Minangkabau Rumah Gadang: a long house on stilts under a roof of curved
-// gonjong horns, with a carved (ukiran) band and windows along the wall.
-export function RumahGadang({ className = "" }: { className?: string }) {
+// A garden at the edge of a forest: round trees and pines behind, rolling
+// bushes in front, and flowers on tall stems.
+export function Garden({ className = "" }: { className?: string }) {
+  const flowers = [
+    [28, 138, 5, "text-rose"], [70, 128, 4, "text-blush"], [118, 136, 5, "text-gold-light"], [162, 130, 4, "text-rose"],
+    [240, 132, 4, "text-blush"], [284, 126, 5, "text-rose"], [330, 134, 4, "text-gold-light"], [374, 128, 5, "text-blush"],
+  ] as const;
   return (
     <svg viewBox="0 0 400 200" className={className} fill="currentColor" aria-hidden>
-      {/* roof with five gonjong peaks */}
-      <path d="M35 6 Q60 70 82 78 Q102 72 112 26 Q120 78 152 86 Q190 82 200 38 Q210 82 248 86 Q280 78 288 26 Q298 72 318 78 Q340 70 365 6 Q354 92 336 118 L64 118 Q46 92 35 6 Z" />
-      {/* finials on the horn tips */}
-      {[
-        [35, 6],
-        [112, 26],
-        [200, 38],
-        [288, 26],
-        [365, 6],
-      ].map(([x, y]) => (
-        <circle key={x} cx={x} cy={y - 3} r="2.5" />
-      ))}
-      {/* walls lean outwards towards the roof */}
-      <path d="M74 118 H326 L313 168 H87 Z" />
-      {/* stilts and ground line */}
-      {[96, 132, 168, 232, 268, 304].map((x) => (
-        <rect key={x} x={x - 3} y="166" width="6" height="32" />
-      ))}
-      <rect x="40" y="196" width="320" height="4" />
-      {/* stairs to the entrance */}
-      <path d="M184 168 H216 L222 198 H178 Z" />
-      {/* lighter details: roof thatch lines, carved band, windows */}
-      <g className="text-gold" opacity="0.35">
-        <path d="M70 108 H330 M80 98 H320" stroke="currentColor" strokeWidth="1.2" fill="none" />
-        <path
-          d="M80 126 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          fill="none"
-        />
-        {[104, 136, 168, 216, 248, 280].map((x) => (
-          <rect key={x} x={x} y="140" width="16" height="18" rx="1" />
-        ))}
-        <path d="M190 168 V148 Q200 138 210 148 V168 Z" />
+      {/* far forest */}
+      <g opacity="0.55">
+        <path d="M118 150 L134 70 L150 150 Z M110 120 L134 40 L158 120 Z M116 90 L134 20 L152 90 Z" />
+        <path d="M268 150 L284 76 L300 150 Z M260 122 L284 46 L308 122 Z M266 94 L284 26 L302 94 Z" />
+        <circle cx="30" cy="112" r="24" />
+        <circle cx="372" cy="108" r="26" />
       </g>
+      {/* trees */}
+      <rect x="57" y="100" width="7" height="100" />
+      <circle cx="60" cy="82" r="26" />
+      <circle cx="40" cy="100" r="19" />
+      <circle cx="80" cy="100" r="19" />
+      <rect x="196" y="90" width="9" height="110" />
+      <circle cx="200" cy="58" r="36" />
+      <circle cx="170" cy="84" r="25" />
+      <circle cx="230" cy="84" r="25" />
+      <circle cx="200" cy="92" r="26" />
+      <rect x="336" y="104" width="7" height="96" />
+      <circle cx="340" cy="86" r="24" />
+      <circle cx="322" cy="102" r="17" />
+      <circle cx="358" cy="102" r="17" />
+      {/* bushes */}
+      <path d="M0 200 V158 Q20 138 46 150 Q70 128 100 148 Q126 134 150 152 Q176 138 200 150 Q226 136 252 152 Q282 130 306 150 Q332 134 356 150 Q382 138 400 154 V200 Z" />
+      {/* flower stems and leaves */}
+      <g stroke="currentColor" strokeWidth="1.5" fill="none">
+        {flowers.map(([x, y]) => (
+          <path key={x} d={`M${x} ${y} Q${x - 4} ${y + 14} ${x} ${y + 26}`} />
+        ))}
+      </g>
+      {flowers.map(([x, y, r, tone]) => (
+        <Bloom key={x} x={x} y={y} r={r} petal={tone} />
+      ))}
+      {/* grass */}
+      <path d="M0 200 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 Z" />
     </svg>
   );
 }
@@ -152,7 +142,7 @@ const petalPositions = [
   [74, 0.8, 10], [85, 4.6, 12], [94, 2, 9], [12, 8.5, 13], [47, 9.5, 11], [80, 10.5, 12],
 ] as const;
 
-// Rose and blush petals drifting down, for the cover and the hero.
+// Rose and blush petals drifting down, for the cover, the hero and the closing.
 export function Petals({ className = "" }: { className?: string }) {
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden>

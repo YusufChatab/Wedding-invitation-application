@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/config/wedding";
 import { startAudioFile, startNatureAmbience, type Ambience } from "@/lib/nature-sound";
 import { BottomNav } from "./bottom-nav";
-import { Lantern, Petals, RumahGadang, Stars } from "./ornaments";
+import { FlowerVine, Garden, Petals, Stars } from "./ornaments";
 import { SoundButton } from "./sound-button";
 
 const MUTE_KEY = "invitation-muted";
@@ -115,8 +115,8 @@ export function InvitationShell({
         >
           <Stars />
           <Petals />
-          <Lantern className="sway absolute left-6 top-0 h-28 w-10 text-gold sm:left-16 sm:h-36 sm:w-14" />
-          <Lantern className="sway absolute right-6 top-0 h-20 w-8 text-gold [animation-delay:-2s] sm:right-16 sm:h-28 sm:w-11" />
+          <FlowerVine className="sway absolute left-6 top-0 h-36 w-11 text-gold sm:left-16 sm:h-36 sm:w-14" />
+          <FlowerVine className="sway absolute right-6 top-0 h-28 w-8 text-gold [animation-delay:-2s] sm:right-16 sm:h-28 sm:w-11" />
 
           <div className="relative z-10 flex flex-col items-center">
             <p className="pop-in font-arabic text-2xl text-gold-light sm:text-3xl">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
@@ -147,7 +147,7 @@ export function InvitationShell({
 
           <div className="glow pointer-events-none absolute -bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
           <div className="pointer-events-none absolute bottom-0 left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[680px]">
-            <RumahGadang className="rise w-full text-maroon-soft [animation-delay:0.3s]" />
+            <Garden className="rise w-full text-maroon-soft [animation-delay:0.3s]" />
           </div>
         </div>
       )}

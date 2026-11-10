@@ -2,7 +2,7 @@
 import { wedding } from "@/config/wedding";
 import type { Wish } from "@/lib/data";
 import { Countdown } from "./countdown";
-import { Divider, FernCorner, Lantern, Petals, RumahGadang, SongketBand, Stars } from "./ornaments";
+import { Divider, FernCorner, FlowerVine, Garden, Petals, SongketBand, Stars } from "./ornaments";
 
 export const couple = `${wedding.groom.shortName} & ${wedding.bride.shortName}`;
 
@@ -59,8 +59,8 @@ export function Hero() {
     >
       <Stars />
       <Petals />
-      <Lantern className="sway absolute left-6 top-0 h-28 w-10 text-gold sm:left-[12%] sm:h-40 sm:w-14" />
-      <Lantern className="sway absolute right-6 top-0 h-20 w-8 text-gold [animation-delay:-2s] sm:right-[12%] sm:h-32 sm:w-12" />
+      <FlowerVine className="sway absolute left-6 top-0 h-36 w-11 text-gold sm:left-[12%] sm:h-40 sm:w-14" />
+      <FlowerVine className="sway absolute right-6 top-0 h-28 w-8 text-gold [animation-delay:-2s] sm:right-[12%] sm:h-32 sm:w-12" />
       <div className="relative z-10">
         <p className="reveal text-sm uppercase tracking-[0.35em] text-gold-light/80 sm:text-base">The Wedding of</p>
         <h1 className="reveal mt-3 font-script text-7xl text-gold sm:text-9xl" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
@@ -72,7 +72,7 @@ export function Hero() {
       </div>
       <div className="glow absolute bottom-6 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
       <div className="reveal absolute bottom-[22px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
-        <RumahGadang className="w-full text-maroon-soft" />
+        <Garden className="w-full text-maroon-soft" />
       </div>
       <SongketBand className="absolute inset-x-0 bottom-0" />
       <a
@@ -305,7 +305,7 @@ export function Closing() {
       <div className="glow absolute bottom-16 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
       {/* Sits above the bottom navigation bar, on a songket "ground". */}
       <div className="reveal absolute bottom-[86px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
-        <RumahGadang className="w-full text-maroon-soft" />
+        <Garden className="w-full text-maroon-soft" />
       </div>
       <div className="absolute inset-x-0 bottom-0 h-[86px] bg-maroon-soft/40" aria-hidden />
       <SongketBand className="absolute inset-x-0 bottom-16" />
