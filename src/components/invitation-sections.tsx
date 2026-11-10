@@ -55,7 +55,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="islamic-pattern relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-[calc(100lvh-100svh+12rem)] text-center text-cream sm:pb-64"
+      className="islamic-pattern relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-48 text-center text-cream sm:pb-64"
     >
       <Stars />
       <Petals />
@@ -70,15 +70,14 @@ export function Hero() {
           {wedding.dateLabel}
         </p>
       </div>
-      <div className="glow absolute bottom-[calc(100lvh-100svh+24px)] left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
-      <div className="reveal absolute bottom-[calc(100lvh-100svh+22px)] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
+      <div className="glow absolute bottom-6 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
+      <div className="reveal absolute bottom-[22px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
         <RumahGadang className="w-full text-maroon-soft" />
       </div>
-      <SongketBand className="absolute inset-x-0 bottom-[calc(100lvh-100svh)]" />
-      <div className="absolute inset-x-0 bottom-0 h-[calc(100lvh-100svh)] bg-maroon-soft/40" aria-hidden />
+      <SongketBand className="absolute inset-x-0 bottom-0" />
       <a
         href="#verse"
-        className="bounce-down absolute bottom-[calc(100lvh-100svh+240px)] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-[400px]"
+        className="bounce-down absolute bottom-[240px] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-[400px]"
         aria-label="Scroll down"
       >
         Scroll
