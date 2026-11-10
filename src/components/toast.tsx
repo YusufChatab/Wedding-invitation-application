@@ -12,11 +12,11 @@ export function Toast({ ok, message }: { ok: boolean; message: string }) {
     <div
       role="status"
       className={`toast fixed left-1/2 top-4 z-[60] flex w-[calc(100%-2rem)] max-w-sm items-center gap-3 rounded-2xl border px-4 py-3 text-left shadow-2xl shadow-black/30 ${
-        ok ? "border-gold/60 bg-emerald-deep text-cream" : "border-red-300/60 bg-red-950 text-red-50"
+        ok ? "border-gold/60 bg-maroon-deep text-cream" : "border-red-300/60 bg-red-950 text-red-50"
       }`}
     >
       <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${ok ? "bg-gold text-emerald-deep" : "bg-red-300 text-red-950"}`}
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${ok ? "bg-gold text-maroon-deep" : "bg-red-300 text-red-950"}`}
         aria-hidden
       >
         {ok ? (

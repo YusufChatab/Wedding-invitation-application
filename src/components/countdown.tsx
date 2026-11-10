@@ -27,7 +27,7 @@ export function Countdown({ date }: { date: string }) {
   return (
     <div className="grid grid-cols-4 gap-3">
       {(["Days", "Hours", "Minutes", "Seconds"] as const).map((unit) => (
-        <div key={unit} className="rounded-xl border border-gold/40 bg-emerald/70 py-3 text-center">
+        <div key={unit} className="rounded-xl border border-gold/40 bg-maroon/70 py-3 text-center">
           <div className="text-3xl font-semibold tabular-nums text-gold-light">
             {left ? String(left[unit]).padStart(2, "0") : "--"}
           </div>

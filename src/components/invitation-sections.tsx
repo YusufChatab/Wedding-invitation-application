@@ -2,7 +2,7 @@
 import { wedding } from "@/config/wedding";
 import type { Wish } from "@/lib/data";
 import { Countdown } from "./countdown";
-import { Divider, Lantern, Mosque, Stars } from "./ornaments";
+import { Divider, FernCorner, Lantern, Petals, RumahGadang, SongketBand, Stars } from "./ornaments";
 
 export const couple = `${wedding.groom.shortName} & ${wedding.bride.shortName}`;
 
@@ -24,11 +24,12 @@ export function Section({
   return (
     <section
       id={id}
-      className={`scroll-mt-4 px-5 py-16 text-center sm:px-8 sm:py-24 ${dark ? "islamic-pattern bg-emerald-deep text-cream" : "islamic-pattern-light bg-cream text-ink"}`}
+      className={`relative scroll-mt-4 overflow-hidden px-5 py-16 text-center sm:px-8 sm:py-24 ${dark ? "islamic-pattern bg-maroon-deep text-cream" : "islamic-pattern-light bg-cream text-ink"}`}
     >
-      <div className={`mx-auto ${wide ? "max-w-4xl" : "max-w-lg"}`}>
+      {!dark && <Corners />}
+      <div className={`relative mx-auto ${wide ? "max-w-4xl" : "max-w-lg"}`}>
         <div className="reveal" data-anim="zoom">
-          <h2 className={`font-script text-5xl sm:text-6xl ${dark ? "text-gold" : "text-emerald"}`}>{title}</h2>
+          <h2 className={`font-script text-5xl sm:text-6xl ${dark ? "text-gold" : "text-maroon"}`}>{title}</h2>
           {subtitle && <p className={`mt-2 text-lg ${dark ? "text-cream/70" : "text-ink/70"}`}>{subtitle}</p>}
           <Divider className="my-6" />
         </div>
@@ -40,13 +41,24 @@ export function Section({
   );
 }
 
+// Fern-curl carvings in the top-left and bottom-right corners of light sections.
+function Corners() {
+  return (
+    <>
+      <FernCorner className="absolute left-2 top-2 h-20 w-20 text-mauve/60 sm:h-28 sm:w-28" />
+      <FernCorner className="absolute bottom-2 right-2 h-20 w-20 rotate-180 text-mauve/60 sm:h-28 sm:w-28" />
+    </>
+  );
+}
+
 export function Hero() {
   return (
     <section
       id="home"
-      className="islamic-pattern relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-emerald-deep px-6 pb-48 text-center text-cream sm:pb-64"
+      className="islamic-pattern relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-48 text-center text-cream sm:pb-64"
     >
       <Stars />
+      <Petals />
       <Lantern className="sway absolute left-6 top-0 h-28 w-10 text-gold sm:left-[12%] sm:h-40 sm:w-14" />
       <Lantern className="sway absolute right-6 top-0 h-20 w-8 text-gold [animation-delay:-2s] sm:right-[12%] sm:h-32 sm:w-12" />
       <div className="relative z-10">
@@ -58,10 +70,14 @@ export function Hero() {
           {wedding.dateLabel}
         </p>
       </div>
-      <Mosque className="absolute bottom-0 left-1/2 w-[520px] max-w-[130%] -translate-x-1/2 text-emerald-soft sm:w-[760px]" />
+      <div className="glow absolute bottom-6 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
+      <div className="reveal absolute bottom-[22px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
+        <RumahGadang className="w-full text-maroon-soft" />
+      </div>
+      <SongketBand className="absolute inset-x-0 bottom-0" />
       <a
         href="#verse"
-        className="bounce-down absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-28"
+        className="bounce-down absolute bottom-[240px] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-[400px]"
         aria-label="Scroll down"
       >
         Scroll
@@ -75,9 +91,10 @@ export function Hero() {
 
 export function Verse() {
   return (
-    <section id="verse" className="islamic-pattern-light bg-cream px-6 py-16 text-center sm:py-24">
-      <div className="mx-auto max-w-2xl">
-        <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-emerald sm:text-3xl sm:leading-loose" data-anim="zoom">
+    <section id="verse" className="islamic-pattern-light relative overflow-hidden bg-cream px-6 py-16 text-center sm:py-24">
+      <Corners />
+      <div className="relative mx-auto max-w-2xl">
+        <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-maroon sm:text-3xl sm:leading-loose" data-anim="zoom">
           وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ
         </p>
         <Divider className="my-6" />
@@ -87,7 +104,7 @@ export function Verse() {
             tranquility in them, and He placed between you affection and mercy. Indeed, in that are signs for people
             who reflect.&rdquo;
           </p>
-          <p className="mt-3 font-semibold text-emerald">QS. Ar-Rum: 21</p>
+          <p className="mt-3 font-semibold text-maroon">QS. Ar-Rum: 21</p>
         </div>
       </div>
     </section>
@@ -97,12 +114,12 @@ export function Verse() {
 export function Couple() {
   const person = (p: typeof wedding.groom, anim: "left" | "right") => (
     <div className="reveal flex flex-col items-center" data-anim={anim}>
-      <div className="arch flex h-48 w-40 items-center justify-center border-2 border-gold bg-emerald p-1.5 shadow-xl shadow-emerald/20 transition duration-500 hover:-translate-y-1 sm:h-60 sm:w-48">
-        <div className="arch islamic-pattern flex h-full w-full items-center justify-center bg-emerald-deep font-script text-6xl text-gold sm:text-7xl">
-          {p.shortName[0]}
+      <div className="arch flex h-48 w-40 items-center justify-center border-2 border-gold bg-maroon p-1.5 shadow-xl shadow-maroon/20 transition duration-500 hover:-translate-y-1 sm:h-60 sm:w-48">
+        <div className="arch islamic-pattern flex h-full w-full items-center justify-center bg-maroon-deep font-script text-6xl text-gold sm:text-7xl">
+          <span className="float inline-block">{p.shortName[0]}</span>
         </div>
       </div>
-      <h3 className="mt-5 text-2xl font-semibold text-emerald sm:text-3xl">{p.fullName}</h3>
+      <h3 className="mt-5 text-2xl font-semibold text-maroon sm:text-3xl">{p.fullName}</h3>
       <p className="mt-1 text-ink/70">{p.parents}</p>
     </div>
   );
@@ -110,8 +127,8 @@ export function Couple() {
   return (
     <section id="couple" className="islamic-pattern-light scroll-mt-4 bg-cream px-6 pb-16 text-center sm:pb-24">
       <div className="reveal mx-auto max-w-xl">
-        <p className="font-arabic text-xl text-emerald sm:text-2xl">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
-        <p className="mt-2 font-semibold text-emerald">Assalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
+        <p className="font-arabic text-xl text-maroon sm:text-2xl">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
+        <p className="mt-2 font-semibold text-maroon">Assalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">
           With gratitude for the blessings of Allah SWT, we humbly request the honour of your presence and du&apos;a at
           the wedding of our beloved children:
@@ -130,7 +147,9 @@ export function Couple() {
 
 export function Events() {
   return (
-    <section id="event" className="islamic-pattern scroll-mt-4 bg-emerald-deep px-5 py-16 text-center text-cream sm:px-8 sm:py-24">
+    <section id="event" className="islamic-pattern relative scroll-mt-4 bg-maroon-deep px-5 py-16 text-center text-cream sm:px-8 sm:py-24">
+      <SongketBand className="absolute inset-x-0 top-0" />
+      <SongketBand className="absolute inset-x-0 bottom-0" />
       <div className="mx-auto max-w-4xl">
         <div className="reveal" data-anim="zoom">
           <h2 className="font-script text-5xl text-gold sm:text-6xl">The Celebration</h2>
@@ -141,7 +160,7 @@ export function Events() {
           {wedding.events.map((e, i) => (
             <div
               key={e.title}
-              className="reveal rounded-t-[999px] rounded-b-2xl border border-gold/50 bg-emerald/60 px-6 pb-7 pt-14 transition duration-500 hover:-translate-y-1 hover:border-gold"
+              className="reveal rounded-t-[999px] rounded-b-2xl border border-gold/50 bg-maroon/60 px-6 pb-7 pt-14 transition duration-500 hover:-translate-y-1 hover:border-gold"
               data-anim={i % 2 === 0 ? "left" : "right"}
               style={{ animationDelay: `${0.15 * i}s` }}
             >
@@ -155,7 +174,7 @@ export function Events() {
                 href={e.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-flex items-center gap-2 rounded-full border border-gold px-5 py-2.5 text-gold-light transition hover:bg-gold hover:text-emerald-deep active:scale-95"
+                className="mt-5 inline-flex items-center gap-2 rounded-full border border-gold px-5 py-2.5 text-gold-light transition hover:bg-gold hover:text-maroon-deep active:scale-95"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
                   <path d="M12 21s-7-6.2-7-11a7 7 0 1 1 14 0c0 4.8-7 11-7 11z" />
@@ -180,7 +199,7 @@ export function SaveTheDate() {
     `&location=${encodeURIComponent(`${wedding.events[0].venue}, ${wedding.events[0].address}`)}`;
 
   return (
-    <section className="islamic-pattern bg-emerald px-5 py-16 text-center text-cream sm:py-24">
+    <section className="islamic-pattern bg-maroon px-5 py-16 text-center text-cream sm:py-24">
       <div className="mx-auto max-w-lg">
         <div className="reveal" data-anim="zoom">
           <h2 className="font-script text-5xl text-gold sm:text-6xl">Counting the Days</h2>
@@ -192,7 +211,7 @@ export function SaveTheDate() {
             href={calendarUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep transition hover:scale-105 hover:bg-gold-light active:scale-95"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-gold px-6 py-3 font-semibold text-maroon-deep transition hover:scale-105 hover:bg-gold-light active:scale-95"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
               <rect x="3" y="5" width="18" height="16" rx="2" />
@@ -231,19 +250,19 @@ export function WishList({ wishes }: { wishes: Wish[] }) {
       </p>
       <ul className="max-h-[480px] space-y-3 overflow-y-auto overscroll-contain pr-1">
         {wishes.map((w) => (
-          <li key={w.id} className="pop-in flex gap-3 rounded-xl border border-emerald/10 bg-white/80 p-4 shadow-sm">
+          <li key={w.id} className="pop-in flex gap-3 rounded-xl border border-maroon/10 bg-white/80 p-4 shadow-sm">
             <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald font-semibold text-gold-light"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-maroon font-semibold text-gold-light"
               aria-hidden
             >
               {w.name.trim()[0]?.toUpperCase()}
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="font-semibold text-emerald">{w.name}</span>
+                <span className="font-semibold text-maroon">{w.name}</span>
                 {w.attending !== null && (
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs ${w.attending ? "bg-emerald/10 text-emerald" : "bg-ink/10 text-ink/70"}`}
+                    className={`rounded-full px-2 py-0.5 text-xs ${w.attending ? "bg-maroon/10 text-maroon" : "bg-ink/10 text-ink/70"}`}
                   >
                     {w.attending ? "Attending" : "Not attending"}
                   </span>
@@ -262,8 +281,10 @@ export function WishList({ wishes }: { wishes: Wish[] }) {
 
 export function Closing() {
   return (
-    <section className="islamic-pattern relative overflow-hidden bg-emerald-deep px-6 pb-80 pt-16 text-center text-cream sm:pb-[28rem] sm:pt-24">
+    <section className="islamic-pattern relative overflow-hidden bg-maroon-deep px-6 pb-[340px] pt-16 text-center text-cream sm:pb-[34rem] sm:pt-24">
+      <SongketBand className="absolute inset-x-0 top-0" />
       <Stars />
+      <Petals />
       <div className="relative z-10 mx-auto max-w-xl">
         <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-gold-light sm:text-3xl" data-anim="zoom">
           بَارَكَ ٱللَّٰهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ
@@ -281,7 +302,13 @@ export function Closing() {
           <p className="mt-2 font-script text-5xl text-gold sm:text-6xl">{couple}</p>
         </div>
       </div>
-      <Mosque className="absolute bottom-0 left-1/2 w-[520px] max-w-[130%] -translate-x-1/2 text-emerald-soft sm:w-[760px]" />
+      <div className="glow absolute bottom-16 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
+      {/* Sits above the bottom navigation bar, on a songket "ground". */}
+      <div className="reveal absolute bottom-[86px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
+        <RumahGadang className="w-full text-maroon-soft" />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-[86px] bg-maroon-soft/40" aria-hidden />
+      <SongketBand className="absolute inset-x-0 bottom-16" />
     </section>
   );
 }

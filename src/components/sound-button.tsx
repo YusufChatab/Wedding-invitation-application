@@ -8,7 +8,7 @@ export function SoundButton({ muted, onToggle }: { muted: boolean; onToggle: () 
       onClick={onToggle}
       aria-label={muted ? "Turn sound on" : "Mute sound"}
       aria-pressed={!muted}
-      className="pop-in fixed bottom-24 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-gold/60 bg-emerald-deep/85 text-gold-light shadow-xl shadow-black/30 backdrop-blur-md transition [animation-delay:1.1s] hover:scale-105 hover:text-gold active:scale-95 sm:right-6"
+      className="pop-in fixed bottom-24 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-gold/60 bg-maroon-deep/85 text-gold-light shadow-xl shadow-black/30 backdrop-blur-md transition [animation-delay:1.1s] hover:scale-105 hover:text-gold active:scale-95 sm:right-6"
     >
       {!muted && <span className="absolute inset-0 animate-ping rounded-full border border-gold/40 [animation-duration:2.5s]" aria-hidden />}
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 
 // Colours the phone's browser bar to match the invitation instead of white.
 export const viewport: Viewport = {
-  themeColor: "#0b2b24",
+  themeColor: "#4f1230",
   colorScheme: "dark",
 };
 

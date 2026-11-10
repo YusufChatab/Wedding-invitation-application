@@ -21,7 +21,7 @@ export function WishForm({
   return (
     <form ref={formRef} action={formAction} className="space-y-3 text-left">
       <p className="text-sm text-ink/70">
-        Posting as <strong className="text-emerald">{guestName}</strong>
+        Posting as <strong className="text-maroon">{guestName}</strong>
       </p>
       <textarea
         name="message"
@@ -29,12 +29,12 @@ export function WishForm({
         maxLength={500}
         rows={4}
         placeholder="Write your du'a and wishes for the couple…"
-        className="w-full rounded-xl border border-emerald/20 bg-white/80 px-4 py-3 text-base text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none"
+        className="w-full rounded-xl border border-maroon/20 bg-white/80 px-4 py-3 text-base text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none"
       />
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-emerald py-3 font-semibold text-cream transition hover:bg-emerald-soft active:scale-[0.98] disabled:opacity-50"
+        className="w-full rounded-full bg-maroon py-3 font-semibold text-cream transition hover:bg-maroon-soft active:scale-[0.98] disabled:opacity-50"
       >
         {pending ? "Sending…" : "Send Wishes"}
       </button>

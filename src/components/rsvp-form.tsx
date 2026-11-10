@@ -14,7 +14,7 @@ type Props = {
 };
 
 const choice =
-  "flex-1 cursor-pointer rounded-xl border border-gold/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-emerald-deep has-[:checked]:font-semibold";
+  "flex-1 cursor-pointer rounded-xl border border-gold/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-maroon-deep has-[:checked]:font-semibold";
 
 export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) {
   const [state, formAction, pending] = useActionState(action, null);
@@ -44,7 +44,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
         >
           <div>
             <label className="mb-1 block text-sm text-cream/70">Name</label>
-            <div className="rounded-xl border border-gold/30 bg-emerald/50 px-4 py-3 text-lg">{guestName}</div>
+            <div className="rounded-xl border border-gold/30 bg-maroon/50 px-4 py-3 text-lg">{guestName}</div>
           </div>
 
           <fieldset>
@@ -80,7 +80,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
                   defaultValue={current.plusOneName ?? ""}
                   maxLength={100}
                   placeholder="Plus one's name (optional)"
-                  className="pop-in w-full rounded-xl border border-gold/30 bg-emerald/50 px-4 py-3 text-base text-cream placeholder:text-cream/40 focus:border-gold focus:outline-none"
+                  className="pop-in w-full rounded-xl border border-gold/30 bg-maroon/50 px-4 py-3 text-base text-cream placeholder:text-cream/40 focus:border-gold focus:outline-none"
                 />
               )}
             </fieldset>
@@ -89,7 +89,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
           <button
             type="submit"
             disabled={pending || attending === null}
-            className="w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep transition hover:bg-gold-light active:scale-[0.98] disabled:opacity-50"
+            className="w-full rounded-full bg-gold py-3 font-semibold text-maroon-deep transition hover:bg-gold-light active:scale-[0.98] disabled:opacity-50"
           >
             {pending ? "Sending…" : current.attending === null ? "Send RSVP" : "Update RSVP"}
           </button>
@@ -119,10 +119,10 @@ function Replied({ current, onChange }: { current: Current; onChange: () => void
   return (
     <div
       key={`${current.attending}-${current.bringingPlusOne}`}
-      className="pop-in rounded-3xl border border-gold/50 bg-emerald/60 px-6 py-8 shadow-xl shadow-black/20"
+      className="pop-in rounded-3xl border border-gold/50 bg-maroon/60 px-6 py-8 shadow-xl shadow-black/20"
     >
       <span
-        className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${coming ? "bg-gold text-emerald-deep" : "bg-cream/15 text-gold-light"}`}
+        className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${coming ? "bg-gold text-maroon-deep" : "bg-cream/15 text-gold-light"}`}
         aria-hidden
       >
         {coming ? (
@@ -158,7 +158,7 @@ function Replied({ current, onChange }: { current: Current; onChange: () => void
       <button
         type="button"
         onClick={onChange}
-        className="mt-6 rounded-full border border-gold px-6 py-2.5 text-gold-light transition hover:bg-gold hover:text-emerald-deep active:scale-95"
+        className="mt-6 rounded-full border border-gold px-6 py-2.5 text-gold-light transition hover:bg-gold hover:text-maroon-deep active:scale-95"
       >
         Change my answer
       </button>

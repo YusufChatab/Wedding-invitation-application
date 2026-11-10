@@ -35,7 +35,7 @@ export function Mosque({ className = "" }: { className?: string }) {
       {/* hall */}
       <rect x="60" y="150" width="280" height="60" />
       {/* doors and windows cut out with the background colour */}
-      <g className="text-emerald-deep" fill="currentColor" opacity="0.55">
+      <g className="text-maroon-deep" fill="currentColor" opacity="0.55">
         <path d="M184 210 V182 Q184 166 200 160 Q216 166 216 182 V210 Z" />
         {[96, 132, 252, 288].map((x) => (
           <path key={x} d={`M${x} 196 V178 Q${x} 168 ${x + 8} 164 Q${x + 16} 168 ${x + 16} 178 V196 Z`} />
@@ -79,5 +79,90 @@ export function Lantern({ className = "" }: { className?: string }) {
       <path d="M14 82 h12 l-6 10 z" fill="currentColor" />
       <circle cx="20" cy="56" r="4" fill="currentColor" fillOpacity="0.5" stroke="none" />
     </svg>
+  );
+}
+
+// Minangkabau Rumah Gadang: a long house on stilts under a roof of curved
+// gonjong horns, with a carved (ukiran) band and windows along the wall.
+export function RumahGadang({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 400 200" className={className} fill="currentColor" aria-hidden>
+      {/* roof with five gonjong peaks */}
+      <path d="M35 6 Q60 70 82 78 Q102 72 112 26 Q120 78 152 86 Q190 82 200 38 Q210 82 248 86 Q280 78 288 26 Q298 72 318 78 Q340 70 365 6 Q354 92 336 118 L64 118 Q46 92 35 6 Z" />
+      {/* finials on the horn tips */}
+      {[
+        [35, 6],
+        [112, 26],
+        [200, 38],
+        [288, 26],
+        [365, 6],
+      ].map(([x, y]) => (
+        <circle key={x} cx={x} cy={y - 3} r="2.5" />
+      ))}
+      {/* walls lean outwards towards the roof */}
+      <path d="M74 118 H326 L313 168 H87 Z" />
+      {/* stilts and ground line */}
+      {[96, 132, 168, 232, 268, 304].map((x) => (
+        <rect key={x} x={x - 3} y="166" width="6" height="32" />
+      ))}
+      <rect x="40" y="196" width="320" height="4" />
+      {/* stairs to the entrance */}
+      <path d="M184 168 H216 L222 198 H178 Z" />
+      {/* lighter details: roof thatch lines, carved band, windows */}
+      <g className="text-gold" opacity="0.35">
+        <path d="M70 108 H330 M80 98 H320" stroke="currentColor" strokeWidth="1.2" fill="none" />
+        <path
+          d="M80 126 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6"
+          stroke="currentColor"
+          strokeWidth="1.2"
+          fill="none"
+        />
+        {[104, 136, 168, 216, 248, 280].map((x) => (
+          <rect key={x} x={x} y="140" width="16" height="18" rx="1" />
+        ))}
+        <path d="M190 168 V148 Q200 138 210 148 V168 Z" />
+      </g>
+    </svg>
+  );
+}
+
+// Strip of songket weave: gold pucuak rabuang (bamboo shoot) triangles with a
+// light sweeping across, used to separate sections.
+export function SongketBand({ className = "" }: { className?: string }) {
+  return <div className={`songket-band ${className}`} aria-hidden />;
+}
+
+// Kaluak paku (fern curl), the classic Minang wood-carving motif, for corners.
+// Draws itself in when it scrolls into view.
+export function FernCorner({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 120 120" className={`reveal draw pointer-events-none ${className}`} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden>
+      <path pathLength="1" d="M2 2 C50 4 92 22 96 58 C99 82 82 94 68 90 C54 86 54 66 68 64 C78 63 82 74 74 78" />
+      <path pathLength="1" d="M2 2 C4 40 18 70 46 86 C60 94 70 108 60 116" />
+      <path pathLength="1" d="M30 10 C40 22 38 34 28 36 C20 37 20 28 27 28" />
+      <path pathLength="1" d="M10 30 C22 40 34 38 36 28" />
+      <path pathLength="1" d="M58 22 C62 36 56 46 48 44" />
+    </svg>
+  );
+}
+
+// Fixed petal positions so server and client render the same markup.
+const petalPositions = [
+  [6, 0, 9], [18, 3.5, 11], [29, 1.2, 10], [41, 6, 12], [52, 2.4, 9], [63, 7.5, 11],
+  [74, 0.8, 10], [85, 4.6, 12], [94, 2, 9], [12, 8.5, 13], [47, 9.5, 11], [80, 10.5, 12],
+] as const;
+
+// Rose and blush petals drifting down, for the cover and the hero.
+export function Petals({ className = "" }: { className?: string }) {
+  return (
+    <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden>
+      {petalPositions.map(([left, delay, duration], i) => (
+        <span
+          key={i}
+          className={`petal ${i % 3 === 0 ? "bg-blush" : i % 3 === 1 ? "bg-rose" : "bg-gold-light"}`}
+          style={{ left: `${left}%`, animationDelay: `${delay}s`, animationDuration: `${duration}s`, scale: `${0.7 + (i % 4) * 0.15}` }}
+        />
+      ))}
+    </div>
   );
 }

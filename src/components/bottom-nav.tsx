@@ -31,7 +31,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Sections"
-      className="pop-in fixed inset-x-0 bottom-3 z-40 mx-auto flex w-[calc(100%-1.5rem)] max-w-md justify-around rounded-full border border-gold/40 bg-emerald-deep/85 px-2 py-1.5 shadow-xl shadow-black/30 backdrop-blur-md [animation-delay:0.9s]"
+      className="pop-in fixed inset-x-0 bottom-3 z-40 mx-auto flex w-[calc(100%-1.5rem)] max-w-md justify-around rounded-full border border-gold/40 bg-maroon-deep/85 px-2 py-1.5 shadow-xl shadow-black/30 backdrop-blur-md [animation-delay:0.9s]"
     >
       {items.map((item) => {
         const isActive = active === item.id;
@@ -44,7 +44,7 @@ export function BottomNav() {
               document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
             }}
             aria-current={isActive ? "true" : undefined}
-            className={`flex flex-1 flex-col items-center gap-0.5 rounded-full py-1.5 text-[11px] transition ${isActive ? "bg-gold text-emerald-deep" : "text-cream/75 hover:text-gold-light"}`}
+            className={`flex flex-1 flex-col items-center gap-0.5 rounded-full py-1.5 text-[11px] transition ${isActive ? "bg-gold text-maroon-deep" : "text-cream/75 hover:text-gold-light"}`}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d={item.icon} />

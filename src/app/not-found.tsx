@@ -2,7 +2,7 @@ import { Divider } from "@/components/ornaments";
 
 export default function NotFound() {
   return (
-    <main className="islamic-pattern flex min-h-screen flex-col items-center justify-center bg-emerald-deep px-6 text-center text-cream">
+    <main className="islamic-pattern flex min-h-screen flex-col items-center justify-center bg-maroon-deep px-6 text-center text-cream">
       <h1 className="font-script text-6xl text-gold">Invitation not found</h1>
       <Divider className="my-6" />
       <p className="max-w-sm text-cream/75">
