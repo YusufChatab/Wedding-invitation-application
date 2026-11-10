@@ -11,7 +11,7 @@ export function Toast({ ok, message }: { ok: boolean; message: string }) {
   return createPortal(
     <div
       role="status"
-      className={`toast fixed left-1/2 top-4 z-[60] flex w-[calc(100%-2rem)] max-w-sm items-center gap-3 rounded-2xl border px-4 py-3 text-left shadow-2xl shadow-black/30 ${
+      className={`toast fixed inset-x-4 top-4 z-[60] mx-auto flex max-w-sm items-center gap-3 rounded-2xl border px-4 py-3 text-left shadow-2xl shadow-black/30 ${
         ok ? "border-gold/60 bg-maroon-deep text-cream" : "border-red-300/60 bg-red-950 text-red-50"
       }`}
     >

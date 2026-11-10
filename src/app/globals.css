@@ -100,9 +100,9 @@ body {
   50% { transform: translateY(-6px); }
 }
 @keyframes toast {
-  0% { opacity: 0; transform: translate(-50%, -24px); }
+  0% { opacity: 0; transform: translateY(-24px); }
   10%, 85% { opacity: 1; transform: none; }
-  100% { opacity: 0; transform: translate(-50%, -24px); }
+  100% { opacity: 0; transform: translateY(-24px); }
 }
 
 /* Scroll-triggered entrance. Choose a direction with data-anim and an
