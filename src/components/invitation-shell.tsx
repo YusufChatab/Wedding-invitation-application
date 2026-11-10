@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/config/wedding";
 import { startAudioFile, startNatureAmbience, type Ambience } from "@/lib/nature-sound";
 import { BottomNav } from "./bottom-nav";
-import { FlowerVine, Garden, Petals, Stars } from "./ornaments";
+import { FlowerVine, Petals, RumahGadang, Stars } from "./ornaments";
 import { SoundButton } from "./sound-button";
 
 const MUTE_KEY = "invitation-muted";
@@ -110,8 +110,9 @@ export function InvitationShell({
     <>
       {stage !== "open" && (
         <div
-          // 100lvh: still fills the screen when the phone's address bar hides.
-          className={`cover islamic-pattern fixed inset-x-0 top-0 z-50 flex h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-32 text-center text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
+          // 100dvh: ends at the visible bottom on iPhones, whose toolbar floats over
+          // the page; the hero underneath is tall enough to stay maroon there.
+          className={`cover islamic-pattern fixed inset-x-0 top-0 z-50 flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-[250px] sm:pb-[340px] text-center text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
         >
           <Stars />
           <Petals />
@@ -146,8 +147,8 @@ export function InvitationShell({
           </div>
 
           <div className="glow pointer-events-none absolute -bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
-          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[680px]">
-            <Garden className="rise w-full text-maroon-soft [animation-delay:0.3s]" />
+          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[440px] max-w-[118%] -translate-x-1/2 sm:w-[600px]">
+            <RumahGadang uid="cover" className="rise w-full drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)] [animation-delay:0.3s]" />
           </div>
         </div>
       )}

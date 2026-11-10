@@ -69,49 +69,195 @@ export function FlowerVine({ className = "" }: { className?: string }) {
   );
 }
 
-// A garden at the edge of a forest: round trees and pines behind, rolling
-// bushes in front, and flowers on tall stems.
-export function Garden({ className = "" }: { className?: string }) {
+const P = {
+  roofTop: "#2a0717",
+  roofBottom: "#5b1636",
+  wall: "#7a1e47",
+  wallDark: "#5a1434",
+  post: "#33091d",
+  gold: "#d1a95e",
+  goldLight: "#efd6a3",
+  rose: "#ca9b9b",
+  blush: "#ecdace",
+  light: "#ffd9a0",
+};
+
+// Gold finial on a gonjong tip; it twinkles.
+function Finial({ x, y, delay = 0 }: { x: number; y: number; delay?: number }) {
+  return (
+    <g className="twinkle" style={{ animationDelay: `${delay}s`, transformBox: "fill-box", transformOrigin: "center" }}>
+      <path d={`M${x} ${y - 9} L${x + 2.2} ${y - 2} L${x} ${y + 1} L${x - 2.2} ${y - 2} Z`} fill={P.goldLight} />
+      <circle cx={x} cy={y - 10} r="1.6" fill={P.goldLight} />
+    </g>
+  );
+}
+
+// A gonjong roof: curved saddles between sharp `tips` (left to right), with
+// the eave running from `left` to `right` at height `eave`.
+function gonjongRoof(tips: [number, number][], eave: number, left: number, right: number, sag: number) {
+  let edge = `M${tips[0][0]} ${tips[0][1]}`;
+  for (let i = 1; i < tips.length; i++) {
+    const [x0] = tips[i - 1];
+    const [x1, y1] = tips[i];
+    const mid = (x0 + x1) / 2;
+    edge += ` Q${x0 + (mid - x0) * 0.5} ${sag - 6} ${mid} ${sag} Q${mid + (x1 - mid) * 0.5} ${sag - 6} ${x1} ${y1}`;
+  }
+  const [lx, ly] = tips[0];
+  const [rx, ry] = tips[tips.length - 1];
+  const fill =
+    edge +
+    ` Q${rx - 8} ${(ry + eave) / 2 + 20} ${right} ${eave} L${left} ${eave} Q${lx + 8} ${(ly + eave) / 2 + 20} ${lx} ${ly} Z`;
+  return { fill, edge };
+}
+
+// Small rice barn (rangkiang) on stilts that stands beside a Rumah Gadang.
+function Rangkiang({ x, uid }: { x: number; uid: string }) {
+  const roof = gonjongRoof([[x - 22, 118], [x + 22, 118]], 160, x - 16, x + 16, 148);
+  return (
+    <g>
+      {[-10, 0, 10].map((dx) => (
+        <rect key={dx} x={x + dx - 1.5} y="188" width="3" height="34" fill={P.post} />
+      ))}
+      <path d={`M${x - 15} 160 H${x + 15} L${x + 12} 190 H${x - 12} Z`} fill={`url(#${uid}-wall)`} />
+      <rect x={x - 14} y="162" width="28" height="6" fill={`url(#${uid}-carve)`} />
+      <path d={`M${x - 6} 186 V176 Q${x} 170 ${x + 6} 176 V186 Z`} fill={P.gold} opacity="0.8" />
+      <path d={roof.fill} fill={`url(#${uid}-roof)`} />
+      <path d={roof.edge} fill="none" stroke={P.gold} strokeWidth="1.2" />
+      <Finial x={x - 22} y={118} delay={1.4} />
+      <Finial x={x + 22} y={118} delay={2.2} />
+    </g>
+  );
+}
+
+// Minangkabau Rumah Gadang, drawn in colour: sweeping gonjong roof with gold
+// trim and finials, carved songket-style panels, glowing windows, a front
+// porch with its own gonjong, rice barns on either side and Mount Marapi
+// behind, framed by flowers. `uid` keeps gradient ids unique per copy.
+export function RumahGadang({ className = "", uid }: { className?: string; uid: string }) {
+  const main = gonjongRoof([[62, 20], [124, 44], [200, 58], [276, 44], [338, 20]], 126, 92, 308, 100);
+  const porch = gonjongRoof([[166, 104], [234, 104]], 156, 174, 226, 140);
+  const windows = [104, 128, 152, 228, 252, 276];
   const flowers = [
-    [28, 138, 5, "text-rose"], [70, 128, 4, "text-blush"], [118, 136, 5, "text-gold-light"], [162, 130, 4, "text-rose"],
-    [240, 132, 4, "text-blush"], [284, 126, 5, "text-rose"], [330, 134, 4, "text-gold-light"], [374, 128, 5, "text-blush"],
+    [14, 222, 4, P.rose], [46, 228, 3.5, P.blush], [86, 224, 4, P.goldLight], [124, 230, 3.5, P.rose],
+    [276, 230, 3.5, P.blush], [314, 224, 4, P.rose], [354, 228, 3.5, P.goldLight], [386, 222, 4, P.blush],
   ] as const;
   return (
-    <svg viewBox="0 0 400 200" className={className} fill="currentColor" aria-hidden>
-      {/* far forest */}
-      <g opacity="0.55">
-        <path d="M118 150 L134 70 L150 150 Z M110 120 L134 40 L158 120 Z M116 90 L134 20 L152 90 Z" />
-        <path d="M268 150 L284 76 L300 150 Z M260 122 L284 46 L308 122 Z M266 94 L284 26 L302 94 Z" />
-        <circle cx="30" cy="112" r="24" />
-        <circle cx="372" cy="108" r="26" />
-      </g>
-      {/* trees */}
-      <rect x="57" y="100" width="7" height="100" />
-      <circle cx="60" cy="82" r="26" />
-      <circle cx="40" cy="100" r="19" />
-      <circle cx="80" cy="100" r="19" />
-      <rect x="196" y="90" width="9" height="110" />
-      <circle cx="200" cy="58" r="36" />
-      <circle cx="170" cy="84" r="25" />
-      <circle cx="230" cy="84" r="25" />
-      <circle cx="200" cy="92" r="26" />
-      <rect x="336" y="104" width="7" height="96" />
-      <circle cx="340" cy="86" r="24" />
-      <circle cx="322" cy="102" r="17" />
-      <circle cx="358" cy="102" r="17" />
-      {/* bushes */}
-      <path d="M0 200 V158 Q20 138 46 150 Q70 128 100 148 Q126 134 150 152 Q176 138 200 150 Q226 136 252 152 Q282 130 306 150 Q332 134 356 150 Q382 138 400 154 V200 Z" />
-      {/* flower stems and leaves */}
-      <g stroke="currentColor" strokeWidth="1.5" fill="none">
-        {flowers.map(([x, y]) => (
-          <path key={x} d={`M${x} ${y} Q${x - 4} ${y + 14} ${x} ${y + 26}`} />
+    <svg viewBox="0 0 400 240" className={className} aria-hidden>
+      <defs>
+        <linearGradient id={`${uid}-roof`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={P.roofTop} />
+          <stop offset="1" stopColor={P.roofBottom} />
+        </linearGradient>
+        <linearGradient id={`${uid}-wall`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={P.wall} />
+          <stop offset="1" stopColor={P.wallDark} />
+        </linearGradient>
+        <linearGradient id={`${uid}-mountain`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor={P.rose} stopOpacity="0.35" />
+          <stop offset="1" stopColor={P.rose} stopOpacity="0" />
+        </linearGradient>
+        <radialGradient id={`${uid}-window`}>
+          <stop offset="0" stopColor={P.light} />
+          <stop offset="1" stopColor={P.gold} />
+        </radialGradient>
+        {/* carved band: gold with maroon diamonds, like songket */}
+        <pattern id={`${uid}-carve`} width="10" height="10" patternUnits="userSpaceOnUse">
+          <rect width="10" height="10" fill={P.gold} />
+          <path d="M5 1 L9 5 L5 9 L1 5 Z" fill={P.wallDark} />
+          <circle cx="5" cy="5" r="1.2" fill={P.goldLight} />
+        </pattern>
+        <pattern id={`${uid}-flowerband`} width="12" height="8" patternUnits="userSpaceOnUse">
+          <rect width="12" height="8" fill={P.rose} />
+          <circle cx="6" cy="4" r="2.2" fill={P.wallDark} />
+          <circle cx="0" cy="4" r="1" fill={P.goldLight} />
+          <circle cx="12" cy="4" r="1" fill={P.goldLight} />
+        </pattern>
+        <clipPath id={`${uid}-roofclip`}>
+          <path d={main.fill} />
+        </clipPath>
+      </defs>
+
+      {/* Mount Marapi behind */}
+      <path
+        d="M0 150 Q70 120 120 70 Q150 44 176 46 Q200 40 222 50 Q260 70 300 108 Q350 140 400 146 V240 H0 Z"
+        fill={`url(#${uid}-mountain)`}
+      />
+
+      <Rangkiang x={36} uid={uid} />
+      <Rangkiang x={364} uid={uid} />
+
+      {/* stilts with stone footings */}
+      {[100, 124, 148, 172, 228, 252, 276, 300].map((x) => (
+        <g key={x}>
+          <rect x={x - 2.5} y="176" width="5" height="44" fill={P.post} />
+          <rect x={x - 5} y="218" width="10" height="4" rx="1" fill={P.rose} opacity="0.8" />
+        </g>
+      ))}
+      <rect x="92" y="196" width="216" height="3" fill={P.post} />
+
+      {/* walls lean outwards towards the roof, with carved bands and windows */}
+      <path d="M86 126 H314 L302 180 H98 Z" fill={`url(#${uid}-wall)`} />
+      <path d="M87 126 H313 L311 136 H89 Z" fill={`url(#${uid}-carve)`} />
+      <path d="M99 172 H301 L300 180 H100 Z" fill={`url(#${uid}-flowerband)`} />
+      {windows.map((x, i) => (
+        <g key={x}>
+          <rect x={x - 1} y="141" width="20" height="26" rx="1.5" fill={P.gold} />
+          <rect
+            className="window-glow"
+            style={{ animationDelay: `${i * 0.7}s` }}
+            x={x + 2}
+            y="144"
+            width="14"
+            height="20"
+            fill={`url(#${uid}-window)`}
+          />
+          <path d={`M${x + 9} 144 V164 M${x + 2} 154 H${x + 16}`} stroke={P.wallDark} strokeWidth="1" />
+        </g>
+      ))}
+
+      {/* main roof: gradient, thatch lines, gold trim and finials */}
+      <path d={main.fill} fill={`url(#${uid}-roof)`} />
+      <g clipPath={`url(#${uid}-roofclip)`} stroke={P.gold} strokeOpacity="0.18" strokeWidth="1" fill="none">
+        {[70, 82, 94, 106, 118].map((y) => (
+          <path key={y} d={`M40 ${y} Q200 ${y + 8} 360 ${y}`} />
         ))}
       </g>
-      {flowers.map(([x, y, r, tone]) => (
-        <Bloom key={x} x={x} y={y} r={r} petal={tone} />
+      <path d={main.edge} fill="none" stroke={P.gold} strokeWidth="1.6" />
+      <path d="M92 126 H308" stroke={P.gold} strokeWidth="2" />
+      {[
+        [62, 20, 0],
+        [124, 44, 0.8],
+        [200, 58, 1.6],
+        [276, 44, 2.4],
+        [338, 20, 0.4],
+      ].map(([x, y, d]) => (
+        <Finial key={x} x={x} y={y} delay={d} />
       ))}
-      {/* grass */}
-      <path d="M0 200 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 l6 -16 l4 16 l6 -12 l4 12 l6 -18 l4 18 l6 -10 l4 10 Z" />
+
+      {/* front porch with its own gonjong, glowing door and stairs */}
+      <path d="M176 156 H224 V196 H176 Z" fill={`url(#${uid}-wall)`} />
+      <rect x="176" y="156" width="48" height="6" fill={`url(#${uid}-carve)`} />
+      <path className="window-glow" d="M190 196 V176 Q200 166 210 176 V196 Z" fill={`url(#${uid}-window)`} />
+      <path d="M190 196 V176 Q200 166 210 176 V196" fill="none" stroke={P.gold} strokeWidth="1.5" />
+      <path d={porch.fill} fill={`url(#${uid}-roof)`} />
+      <path d={porch.edge} fill="none" stroke={P.gold} strokeWidth="1.4" />
+      <path d="M174 156 H226" stroke={P.gold} strokeWidth="1.6" />
+      <Finial x={166} y={104} delay={1.1} />
+      <Finial x={234} y={104} delay={1.9} />
+      {[0, 1, 2, 3].map((i) => (
+        <rect key={i} x={186 - i * 3} y={198 + i * 6} width={28 + i * 6} height="5" rx="1" fill={P.rose} opacity={0.95 - i * 0.1} />
+      ))}
+
+      {/* ground, bushes and flowers in front */}
+      <path
+        d="M0 240 V222 Q30 210 60 220 Q90 208 120 222 Q150 214 170 224 L230 224 Q250 214 280 222 Q310 208 340 220 Q370 210 400 222 V240 Z"
+        fill={P.wallDark}
+      />
+      {flowers.map(([x, y, r, c]) => (
+        <g key={x} style={{ color: c }}>
+          <Bloom x={x} y={y} r={r} />
+        </g>
+      ))}
     </svg>
   );
 }

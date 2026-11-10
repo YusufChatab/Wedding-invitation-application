@@ -99,6 +99,10 @@ body {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+@keyframes window-glow {
+  0%, 100% { opacity: 0.75; }
+  50% { opacity: 1; }
+}
 @keyframes toast {
   0% { opacity: 0; transform: translate(-50%, -24px); }
   10%, 85% { opacity: 1; transform: none; }
@@ -165,6 +169,7 @@ body {
 .rise { animation: rise 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .glow { animation: glow 6s ease-in-out infinite; }
 .float { animation: float 5s ease-in-out infinite; }
+.window-glow { animation: window-glow 3.5s ease-in-out infinite; }
 
 /* Curtain that slides the cover away when the invitation is opened. */
 .cover {
@@ -178,7 +183,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; }
   .reveal.is-visible { animation: none; }
-  .twinkle, .sway, .bounce-down, .rise, .glow, .float, .songket-band::after { animation: none; }
+  .twinkle, .sway, .bounce-down, .rise, .glow, .float, .window-glow, .songket-band::after { animation: none; }
   .petal { display: none; }
   .draw path { stroke-dashoffset: 0; }
   .draw.is-visible path { animation: none; }

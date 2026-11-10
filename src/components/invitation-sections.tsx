@@ -2,7 +2,7 @@
 import { wedding } from "@/config/wedding";
 import type { Wish } from "@/lib/data";
 import { Countdown } from "./countdown";
-import { Divider, FernCorner, FlowerVine, Garden, Petals, SongketBand, Stars } from "./ornaments";
+import { Divider, FernCorner, FlowerVine, Petals, RumahGadang, SongketBand, Stars } from "./ornaments";
 
 export const couple = `${wedding.groom.shortName} & ${wedding.bride.shortName}`;
 
@@ -55,7 +55,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="islamic-pattern relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-48 text-center text-cream sm:pb-64"
+      className="islamic-pattern relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-[290px] text-center text-cream sm:pb-[400px]"
     >
       <Stars />
       <Petals />
@@ -71,13 +71,13 @@ export function Hero() {
         </p>
       </div>
       <div className="glow absolute bottom-6 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
-      <div className="reveal absolute bottom-[22px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
-        <Garden className="w-full text-maroon-soft" />
+      <div className="reveal absolute bottom-[22px] left-1/2 w-[440px] max-w-[118%] -translate-x-1/2 sm:w-[620px]" data-anim="rise">
+        <RumahGadang uid="hero" className="w-full drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)]" />
       </div>
       <SongketBand className="absolute inset-x-0 bottom-0" />
       <a
         href="#verse"
-        className="bounce-down absolute bottom-[240px] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-[400px]"
+        className="bounce-down absolute bottom-[300px] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-[410px]"
         aria-label="Scroll down"
       >
         Scroll
@@ -281,7 +281,7 @@ export function WishList({ wishes }: { wishes: Wish[] }) {
 
 export function Closing() {
   return (
-    <section className="islamic-pattern relative overflow-hidden bg-maroon-deep px-6 pb-[340px] pt-16 text-center text-cream sm:pb-[34rem] sm:pt-24">
+    <section className="islamic-pattern relative overflow-hidden bg-maroon-deep px-6 pb-[390px] pt-16 text-center text-cream sm:pb-[500px] sm:pt-24">
       <SongketBand className="absolute inset-x-0 top-0" />
       <Stars />
       <Petals />
@@ -304,8 +304,8 @@ export function Closing() {
       </div>
       <div className="glow absolute bottom-16 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
       {/* Sits above the bottom navigation bar, on a songket "ground". */}
-      <div className="reveal absolute bottom-[86px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
-        <Garden className="w-full text-maroon-soft" />
+      <div className="reveal absolute bottom-[86px] left-1/2 w-[440px] max-w-[118%] -translate-x-1/2 sm:w-[620px]" data-anim="rise">
+        <RumahGadang uid="closing" className="w-full drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)]" />
       </div>
       <div className="absolute inset-x-0 bottom-0 h-[86px] bg-maroon-soft/40" aria-hidden />
       <SongketBand className="absolute inset-x-0 bottom-16" />
