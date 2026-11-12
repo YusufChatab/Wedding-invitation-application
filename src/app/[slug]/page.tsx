@@ -10,6 +10,7 @@ import {
   Couple,
   couple,
   Events,
+  Gift,
   Hero,
   SaveTheDate,
   Section,
@@ -56,6 +57,8 @@ export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
             }}
           />
         </Section>
+
+        <Gift />
 
         <Section id="wishes" title="Du'a & Wishes" subtitle="Send your prayers and best wishes to the couple">
           <WishForm action={wishAction.bind(null, slug)} guestName={invitation.name} />

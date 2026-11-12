@@ -2,7 +2,8 @@
 import { wedding } from "@/config/wedding";
 import type { Wish } from "@/lib/data";
 import { Countdown } from "./countdown";
-import { Divider, FernCorner, FlowerVine, Petals, RumahGadang, SongketBand, Stars } from "./ornaments";
+import { GiftAccounts } from "./gift-accounts";
+import { Divider, FernCorner, FloralSpray, Petals, RumahGadang, SongketBand, Stars } from "./ornaments";
 
 export const couple = `${wedding.groom.shortName} & ${wedding.bride.shortName}`;
 
@@ -24,7 +25,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={`relative scroll-mt-4 overflow-hidden px-5 py-16 text-center sm:px-8 sm:py-24 ${dark ? "islamic-pattern bg-maroon-deep text-cream" : "islamic-pattern-light bg-cream text-ink"}`}
+      className={`relative scroll-mt-4 overflow-hidden px-5 py-16 text-center sm:px-8 sm:py-24 ${dark ? "bg-maroon-deep text-cream" : "bg-cream text-ink"}`}
     >
       {!dark && <Corners />}
       <div className={`relative mx-auto ${wide ? "max-w-4xl" : "max-w-lg"}`}>
@@ -55,12 +56,12 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="islamic-pattern relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-48 text-center text-cream sm:pb-64"
+      className="relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-48 text-center text-cream sm:pb-64"
     >
       <Stars />
       <Petals />
-      <FlowerVine className="sway absolute left-6 top-0 h-36 w-11 text-gold sm:left-[12%] sm:h-40 sm:w-14" />
-      <FlowerVine className="sway absolute right-6 top-0 h-28 w-8 text-gold [animation-delay:-2s] sm:right-[12%] sm:h-32 sm:w-12" />
+      <FloralSpray className="reveal draw sway-corner absolute -right-4 -top-2 w-44 text-gold/90 sm:right-0 sm:w-72" />
+      <FloralSpray className="reveal draw absolute -left-4 bottom-[170px] w-36 rotate-180 text-gold/75 sm:left-0 sm:bottom-[300px] sm:w-60" />
       <div className="relative z-10">
         <p className="reveal text-sm uppercase tracking-[0.35em] text-gold-light/80 sm:text-base">The Wedding of</p>
         <h1 className="reveal mt-3 font-script text-7xl text-gold sm:text-9xl" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
@@ -91,7 +92,7 @@ export function Hero() {
 
 export function Verse() {
   return (
-    <section id="verse" className="islamic-pattern-light relative overflow-hidden bg-cream px-6 py-16 text-center sm:py-24">
+    <section id="verse" className="relative overflow-hidden bg-cream px-6 py-16 text-center sm:py-24">
       <Corners />
       <div className="relative mx-auto max-w-2xl">
         <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-maroon sm:text-3xl sm:leading-loose" data-anim="zoom">
@@ -115,7 +116,7 @@ export function Couple() {
   const person = (p: typeof wedding.groom, anim: "left" | "right") => (
     <div className="reveal flex flex-col items-center" data-anim={anim}>
       <div className="arch flex h-48 w-40 items-center justify-center border-2 border-gold bg-maroon p-1.5 shadow-xl shadow-maroon/20 transition duration-500 hover:-translate-y-1 sm:h-60 sm:w-48">
-        <div className="arch islamic-pattern flex h-full w-full items-center justify-center bg-maroon-deep font-script text-6xl text-gold sm:text-7xl">
+        <div className="arch flex h-full w-full items-center justify-center bg-maroon-deep font-script text-6xl text-gold sm:text-7xl">
           <span className="float inline-block">{p.shortName[0]}</span>
         </div>
       </div>
@@ -125,7 +126,7 @@ export function Couple() {
   );
 
   return (
-    <section id="couple" className="islamic-pattern-light scroll-mt-4 bg-cream px-6 pb-16 text-center sm:pb-24">
+    <section id="couple" className="scroll-mt-4 bg-cream px-6 pb-16 text-center sm:pb-24">
       <div className="reveal mx-auto max-w-xl">
         <p className="font-arabic text-xl text-maroon sm:text-2xl">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
         <p className="mt-2 font-semibold text-maroon">Assalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
@@ -147,7 +148,7 @@ export function Couple() {
 
 export function Events() {
   return (
-    <section id="event" className="islamic-pattern relative scroll-mt-4 bg-maroon-deep px-5 py-16 text-center text-cream sm:px-8 sm:py-24">
+    <section id="event" className="relative scroll-mt-4 bg-maroon-deep px-5 py-16 text-center text-cream sm:px-8 sm:py-24">
       <SongketBand className="absolute inset-x-0 top-0" />
       <SongketBand className="absolute inset-x-0 bottom-0" />
       <div className="mx-auto max-w-4xl">
@@ -199,7 +200,7 @@ export function SaveTheDate() {
     `&location=${encodeURIComponent(`${wedding.events[0].venue}, ${wedding.events[0].address}`)}`;
 
   return (
-    <section className="islamic-pattern bg-maroon px-5 py-16 text-center text-cream sm:py-24">
+    <section className="bg-maroon px-5 py-16 text-center text-cream sm:py-24">
       <div className="mx-auto max-w-lg">
         <div className="reveal" data-anim="zoom">
           <h2 className="font-script text-5xl text-gold sm:text-6xl">Counting the Days</h2>
@@ -279,12 +280,26 @@ export function WishList({ wishes }: { wishes: Wish[] }) {
   );
 }
 
+export function Gift() {
+  return (
+    <Section id="gift" title="Wedding Gift">
+      <p className="mx-auto mb-8 max-w-lg text-lg leading-relaxed text-ink/80">
+        Your presence and du&apos;a are the greatest gift to us. Should you wish to send a token of love, you may do so
+        through the accounts below.
+      </p>
+      <GiftAccounts />
+    </Section>
+  );
+}
+
 export function Closing() {
   return (
-    <section className="islamic-pattern relative overflow-hidden bg-maroon-deep px-6 pb-[340px] pt-16 text-center text-cream sm:pb-[34rem] sm:pt-24">
+    <section className="relative overflow-hidden bg-maroon-deep px-6 pb-[340px] pt-16 text-center text-cream sm:pb-[34rem] sm:pt-24">
       <SongketBand className="absolute inset-x-0 top-0" />
       <Stars />
       <Petals />
+      <FloralSpray className="reveal draw sway-corner absolute -right-4 top-4 w-36 text-gold/80 sm:right-0 sm:w-60" />
+      <FloralSpray className="reveal draw absolute -left-4 bottom-[250px] w-32 rotate-180 text-gold/70 sm:left-0 sm:bottom-[340px] sm:w-52" />
       <div className="relative z-10 mx-auto max-w-xl">
         <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-gold-light sm:text-3xl" data-anim="zoom">
           بَارَكَ ٱللَّٰهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ

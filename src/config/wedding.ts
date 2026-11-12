@@ -40,6 +40,12 @@ export const wedding = {
   // End time for the "Save the date" calendar entry.
   calendarEnd: "2026-12-06T14:00:00+07:00",
 
+  // Bank accounts for wedding gifts (shown in the "Wedding Gift" section).
+  // PLACEHOLDERS: replace with the real accounts before sharing.
+  gifts: [
+    { bank: "BCA", accountNumber: "1234567890", accountName: "Farah" },
+  ],
+
   // Background sound. Leave empty for the built-in nature sounds, or put an
   // MP3 in the `public` folder and set e.g. "/nasheed.mp3".
   backgroundMusic: "/sounds/waterfall-birds.mp3",

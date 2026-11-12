@@ -34,41 +34,6 @@ export function Stars({ className = "" }: { className?: string }) {
   );
 }
 
-// Five round petals around a centre, used by the vine and the garden.
-function Bloom({ x, y, r, petal = "", centre = "text-gold" }: { x: number; y: number; r: number; petal?: string; centre?: string }) {
-  return (
-    <g className={petal}>
-      {[0, 72, 144, 216, 288].map((deg) => {
-        const a = ((deg - 90) * Math.PI) / 180;
-        return <circle key={deg} cx={+(x + Math.cos(a) * r).toFixed(2)} cy={+(y + Math.sin(a) * r).toFixed(2)} r={r * 0.75} fill="currentColor" />;
-      })}
-      <circle cx={x} cy={y} r={r * 0.55} fill="currentColor" className={centre} />
-    </g>
-  );
-}
-
-const leaf = (x: number, y: number, dir: 1 | -1) =>
-  `M${x} ${y} q${10 * dir} -8 ${16 * dir} 0 q${-6 * dir} 8 ${-16 * dir} 0 Z`;
-
-// A flowering vine hanging from the top edge, with leaves and blossoms.
-export function FlowerVine({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 44 150" className={className} aria-hidden>
-      <path d="M22 0 C30 20 14 36 22 56 C30 76 14 92 22 112" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <g fill="currentColor" fillOpacity="0.7">
-        {([[24, 14, 1], [19, 34, -1], [25, 62, 1], [19, 86, -1], [24, 100, 1]] as const).map(([x, y, d]) => (
-          <path key={y} d={leaf(x, y, d)} />
-        ))}
-      </g>
-      <Bloom x={17} y={46} r={4} petal="text-rose" />
-      <Bloom x={27} y={76} r={4} petal="text-blush" />
-      <Bloom x={22} y={122} r={7} petal="text-rose" centre="text-gold-light" />
-      <path d="M22 132 v8" stroke="currentColor" strokeWidth="1.2" />
-      <ellipse cx="22" cy="144" rx="3" ry="5" fill="currentColor" className="text-blush" />
-    </svg>
-  );
-}
-
 // Minangkabau Rumah Gadang: a long house on stilts under a roof of curved
 // gonjong horns, with a carved (ukiran) band and windows along the wall.
 export function RumahGadang({ className = "" }: { className?: string }) {
@@ -129,6 +94,86 @@ export function FernCorner({ className = "" }: { className?: string }) {
       <path pathLength="1" d="M30 10 C40 22 38 34 28 36 C20 37 20 28 27 28" />
       <path pathLength="1" d="M10 30 C22 40 34 38 36 28" />
       <path pathLength="1" d="M58 22 C62 36 56 46 48 44" />
+    </svg>
+  );
+}
+
+// --- Gold line-art side decorations (magnolia branch and peacock) ---------
+// Every shape is a path with pathLength=1 so it can draw itself in: pass
+// "draw-in" to draw on load, or "reveal draw" to draw when scrolled into view.
+
+const circle = (cx: number, cy: number, r: number) =>
+  `M${cx - r} ${cy} a${r} ${r} 0 1 0 ${2 * r} 0 a${r} ${r} 0 1 0 ${-2 * r} 0`;
+
+// Pointed leaf with a midrib, from (x, y) towards `angle` degrees.
+function LineLeaf({ x, y, angle, len, w = len * 0.32 }: { x: number; y: number; angle: number; len: number; w?: number }) {
+  return (
+    <g transform={`rotate(${angle} ${x} ${y})`}>
+      <path pathLength="1" d={`M${x} ${y} Q${x + len * 0.45} ${y - w} ${x + len} ${y} Q${x + len * 0.45} ${y + w} ${x} ${y} Z`} />
+      <path pathLength="1" d={`M${x + 2} ${y} L${x + len * 0.85} ${y}`} strokeOpacity="0.7" />
+    </g>
+  );
+}
+
+// Jasmine (melati), the bridal flower of Minang and Indonesian weddings:
+// five pointed petals around a small centre.
+function Jasmine({ x, y, r, turn = 0 }: { x: number; y: number; r: number; turn?: number }) {
+  return (
+    <g>
+      {[0, 72, 144, 216, 288].map((deg) => (
+        <g key={deg} transform={`rotate(${deg + turn} ${x} ${y})`}>
+          <path pathLength="1" d={`M${x} ${y - r * 0.25} Q${x + r * 0.45} ${y - r * 0.7} ${x} ${y - r} Q${x - r * 0.45} ${y - r * 0.7} ${x} ${y - r * 0.25} Z`} />
+        </g>
+      ))}
+      <path pathLength="1" d={circle(x, y, r * 0.18)} />
+    </g>
+  );
+}
+
+// Closed jasmine bud on a short stalk.
+const bud = (x: number, y: number, dx: number, dy: number) =>
+  `M${x} ${y} L${x + dx * 0.5} ${y + dy * 0.5} M${x + dx * 0.5} ${y + dy * 0.5} C${x + dx * 0.5 - 4} ${y + dy * 0.8} ${x + dx - 3} ${y + dy} ${x + dx} ${y + dy} C${x + dx + 2} ${y + dy - 4} ${x + dx * 0.5 + 4} ${y + dy * 0.6} ${x + dx * 0.5} ${y + dy * 0.5} Z`;
+
+// An open rose drawn as a loose spiral with layered outer petals.
+function Rose({ x, y, s = 1 }: { x: number; y: number; s?: number }) {
+  return (
+    <g transform={`translate(${x} ${y}) scale(${s})`}>
+      <path pathLength="1" d="M0 -2 C4 -4 7 0 4 4 C1 7 -6 5 -6 -1 C-6 -8 3 -12 9 -7 C15 -1 11 9 2 11" />
+      <path pathLength="1" d="M-10 -4 C-12 -14 -2 -20 8 -17 C15 -15 19 -9 18 -2" />
+      <path pathLength="1" d="M18 -2 C21 8 14 17 4 18 C-6 19 -14 12 -13 2" />
+      <path pathLength="1" d="M-13 2 C-20 -2 -22 -12 -16 -18 C-12 -22 -4 -23 2 -21" />
+      <path pathLength="1" d="M-14 8 C-20 16 -12 26 0 25 C12 25 22 18 24 6 C25 0 23 -6 20 -10" />
+    </g>
+  );
+}
+
+// A spray of roses, jasmine, buds and leaves reaching in from the top-right
+// corner. Turn it 180° for the opposite corner.
+export function FloralSpray({ className = "" }: { className?: string }) {
+  const leaves: [number, number, number, number][] = [
+    [182, 8, 120, 34], [170, 11, 214, 30], [132, 30, 100, 36], [122, 38, 206, 30],
+    [92, 64, 140, 32], [86, 74, 40, 26], [76, 100, 160, 30], [150, 52, 30, 26], [148, 66, 150, 24],
+    [62, 42, 250, 22], [78, 46, 110, 22],
+  ];
+  return (
+    <svg viewBox="0 0 200 200" className={`pointer-events-none ${className}`} fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      {/* stems */}
+      <path pathLength="1" d="M204 4 C162 10 124 30 100 58 C84 78 76 102 72 132" strokeWidth="1.8" />
+      <path pathLength="1" d="M156 14 C146 36 142 58 144 82" />
+      <path pathLength="1" d="M112 44 C94 46 72 44 46 34" />
+      <path pathLength="1" d="M86 76 C70 84 56 84 40 80" />
+      {leaves.map(([x, y, a, l]) => (
+        <LineLeaf key={`${x}-${y}`} x={x} y={y} angle={a} len={l} />
+      ))}
+      <Rose x={144} y={102} />
+      <Rose x={70} y={150} s={0.7} />
+      <Jasmine x={42} y={32} r={13} />
+      <Jasmine x={36} y={80} r={11} turn={20} />
+      <Jasmine x={110} y={74} r={9} turn={36} />
+      <Jasmine x={176} y={34} r={8} turn={10} />
+      <path pathLength="1" d={`${bud(46, 34, -16, 12)} ${bud(144, 82, 14, 4)} ${bud(72, 132, -16, 6)} ${bud(156, 14, -8, 18)}`} />
+      {/* scattered dots, like falling pollen */}
+      <path pathLength="1" d={`${circle(20, 56, 1.4)} ${circle(58, 112, 1.4)} ${circle(176, 70, 1.4)} ${circle(120, 120, 1.2)} ${circle(98, 150, 1.2)}`} />
     </svg>
   );
 }

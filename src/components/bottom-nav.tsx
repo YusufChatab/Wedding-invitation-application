@@ -7,6 +7,7 @@ const items = [
   { id: "couple", label: "Couple", icon: "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" },
   { id: "event", label: "Event", icon: "M4 6h16v14H4zM4 10h16M9 3v4M15 3v4" },
   { id: "rsvp", label: "RSVP", icon: "M5 12l4 4 10-10" },
+  { id: "gift", label: "Gift", icon: "M4 11h16v9H4zM3 7h18v4H3zM12 7v13M12 7c-2-4-6-4-6-1.5S10 7 12 7zM12 7c2-4 6-4 6-1.5S14 7 12 7z" },
   { id: "wishes", label: "Wishes", icon: "M4 5h16v11H8l-4 4z" },
 ];
 

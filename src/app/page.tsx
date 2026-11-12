@@ -7,6 +7,7 @@ import {
   Couple,
   couple,
   Events,
+  Gift,
   Hero,
   SaveTheDate,
   Section,
@@ -47,6 +48,8 @@ export default function Home() {
         <Section id="rsvp" dark title="RSVP" subtitle="Kindly let us know if you can join us">
           <PersonalLinkNote dark />
         </Section>
+
+        <Gift />
 
         <Section id="wishes" title="Du'a & Wishes" subtitle="Prayers and best wishes for the couple">
           <PersonalLinkNote />

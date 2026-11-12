@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/config/wedding";
 import { startAudioFile, startNatureAmbience, type Ambience } from "@/lib/nature-sound";
 import { BottomNav } from "./bottom-nav";
-import { FlowerVine, Petals, RumahGadang, Stars } from "./ornaments";
+import { FloralSpray, Petals, RumahGadang, Stars } from "./ornaments";
 import { SoundButton } from "./sound-button";
 
 const MUTE_KEY = "invitation-muted";
@@ -112,12 +112,12 @@ export function InvitationShell({
         <div
           // 100dvh: ends at the visible bottom on iPhones, whose toolbar floats over
           // the page; the hero underneath is tall enough to stay maroon there.
-          className={`cover islamic-pattern fixed inset-x-0 top-0 z-50 flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-[170px] pt-24 text-center sm:pb-[300px] sm:pt-28 text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
+          className={`cover fixed inset-x-0 top-0 z-50 flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-[170px] pt-24 text-center sm:pb-[300px] sm:pt-28 text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
         >
           <Stars />
           <Petals />
-          <FlowerVine className="sway absolute left-6 top-0 h-36 w-11 text-gold sm:left-16 sm:h-36 sm:w-14" />
-          <FlowerVine className="sway absolute right-6 top-0 h-28 w-8 text-gold [animation-delay:-2s] sm:right-16 sm:h-28 sm:w-11" />
+          <FloralSpray className="draw-in sway-corner absolute -right-4 -top-2 w-44 text-gold/90 sm:right-0 sm:w-64" />
+          <FloralSpray className="draw-in absolute -left-4 bottom-[150px] w-36 rotate-180 text-gold/75 sm:left-0 sm:bottom-[240px] sm:w-56" />
 
           <div className="relative z-10 flex flex-col items-center">
             <p className="pop-in font-arabic text-2xl text-gold-light sm:text-3xl">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
