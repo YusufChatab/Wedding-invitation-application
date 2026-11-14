@@ -1,7 +1,9 @@
 // 100 placeholder invitations used until the real guest list arrives.
 // Deterministic, so links stay the same between restarts.
 
-export type DummyGuest = { slug: string; name: string; plusOneAllowed: boolean };
+import type { EventAccess } from "@/config/wedding";
+
+export type DummyGuest = { slug: string; name: string; plusOneAllowed: boolean; events: EventAccess };
 
 const firstNames = [
   "Ahmad", "Muhammad", "Abdullah", "Fatimah", "Aisyah", "Khadijah", "Umar", "Ali", "Hasan", "Husein",
@@ -12,6 +14,9 @@ const lastNames = [
   "Rahman", "Hakim", "Syahputra", "Hidayat", "Nasution", "Lubis", "Harahap", "Siregar", "Alatas", "Assegaf",
   "Basalamah", "Bamuzaham", "Firmansyah", "Kurniawan", "Saputra", "Wijaya", "Hasibuan", "Pratama", "Ramadhan", "Maulana",
 ];
+
+// Test links that always start without an RSVP, one per invitation type.
+export const TEST_GUESTS = 5;
 
 export function slugify(name: string) {
   return name
@@ -24,7 +29,13 @@ export function slugify(name: string) {
 }
 
 export function dummyGuests(count = 100): DummyGuest[] {
-  const out: DummyGuest[] = [{ slug: "yusuf-chatab", name: "Yusuf Chatab", plusOneAllowed: true }];
+  const out: DummyGuest[] = [
+    { slug: "yusuf-chatab", name: "Yusuf Chatab", plusOneAllowed: true, events: "both" },
+    { slug: "test-akad-only", name: "Test Akad Only", plusOneAllowed: true, events: "akad" },
+    { slug: "test-reception-only", name: "Test Reception Only", plusOneAllowed: true, events: "reception" },
+    { slug: "test-reception-single", name: "Test Reception Single", plusOneAllowed: false, events: "reception" },
+    { slug: "test-akad-single", name: "Test Akad Single", plusOneAllowed: false, events: "akad" },
+  ];
   const seen = new Set(out.map((g) => g.slug));
   let seed = 7;
   const next = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) >>> 16);
@@ -38,7 +49,8 @@ export function dummyGuests(count = 100): DummyGuest[] {
     if (seen.has(slug)) continue;
     seen.add(slug);
     // Families/couples are already counted as one invitation, so no extra plus one.
-    out.push({ slug, name, plusOneAllowed: style > 1 && next() % 2 === 0 });
+    const pick = out.length % 5; // not from next(), so the names stay the same as before
+    out.push({ slug, name, plusOneAllowed: style > 1 && next() % 2 === 0, events: pick === 0 ? "akad" : pick === 1 ? "reception" : "both" });
   }
   return out;
 }

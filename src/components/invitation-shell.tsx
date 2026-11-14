@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { wedding } from "@/config/wedding";
 import { startAudioFile, startNatureAmbience, type Ambience } from "@/lib/nature-sound";
 import { BottomNav } from "./bottom-nav";
-import { FloralSpray, Petals, RumahGadang, Stars } from "./ornaments";
+import { FloralSpray, Petals, Stars } from "./ornaments";
 import { SoundButton } from "./sound-button";
 
 const MUTE_KEY = "invitation-muted";
@@ -32,10 +32,13 @@ type Stage = "closed" | "opening" | "open";
 export function InvitationShell({
   guestName,
   coupleNames,
+  note,
   children,
 }: {
   guestName: string;
   coupleNames: string;
+  // What this invitation covers, e.g. "Invited to the Akad Nikah".
+  note?: string;
   children: React.ReactNode;
 }) {
   const [stage, setStage] = useState<Stage>("closed");
@@ -112,12 +115,12 @@ export function InvitationShell({
         <div
           // 100dvh: ends at the visible bottom on iPhones, whose toolbar floats over
           // the page; the hero underneath is tall enough to stay maroon there.
-          className={`cover fixed inset-x-0 top-0 z-50 flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-[170px] pt-24 text-center sm:pb-[300px] sm:pt-28 text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
+          className={`cover fixed inset-x-0 top-0 z-50 flex h-[100dvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-16 pt-24 text-center sm:pb-20 sm:pt-28 text-cream shadow-2xl shadow-black/60 ${stage === "opening" ? "is-leaving" : ""}`}
         >
           <Stars />
           <Petals />
           <FloralSpray className="draw-in sway-corner absolute -right-4 -top-2 w-44 text-gold/90 sm:right-0 sm:w-64" />
-          <FloralSpray className="draw-in absolute -left-4 bottom-[150px] w-36 rotate-180 text-gold/75 sm:left-0 sm:bottom-[240px] sm:w-56" />
+          <FloralSpray className="draw-in absolute -left-4 bottom-4 w-36 rotate-180 text-gold/75 sm:left-0 sm:w-56" />
 
           <div className="relative z-10 flex flex-col items-center">
             <p className="pop-in font-arabic text-2xl text-gold-light sm:text-3xl">بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
@@ -129,6 +132,7 @@ export function InvitationShell({
             <div className="pop-in mt-10 rounded-2xl border border-gold/40 bg-maroon/60 px-8 py-5 backdrop-blur [animation-delay:0.55s]">
               <p className="text-sm tracking-wide text-gold-light/80">Dear</p>
               <p className="mt-1 text-2xl font-semibold sm:text-3xl">{guestName}</p>
+              {note && <p className="mt-2 text-sm text-gold-light">{note}</p>}
               <p className="mt-2 text-xs italic text-cream/60">We apologise for any misspelling of names or titles</p>
             </div>
 
@@ -147,9 +151,6 @@ export function InvitationShell({
           </div>
 
           <div className="glow pointer-events-none absolute -bottom-10 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
-          <div className="pointer-events-none absolute bottom-0 left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[680px]">
-            <RumahGadang className="rise w-full text-maroon-soft [animation-delay:0.3s]" />
-          </div>
         </div>
       )}
       {children}

@@ -10,6 +10,8 @@ type Current = { attending: boolean | null; bringingPlusOne: boolean; plusOneNam
 type Props = {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   guestName: string;
+  // The events this guest is invited to, e.g. "Akad Nikah".
+  eventsLabel: string;
   plusOneAllowed: boolean;
   current: Current;
 };
@@ -22,7 +24,7 @@ const card =
 const choice =
   "flex-1 cursor-pointer rounded-xl border border-gold/40 bg-maroon-deep/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-maroon-deep has-[:checked]:font-semibold";
 
-export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) {
+export function RsvpForm({ action, guestName, eventsLabel, plusOneAllowed, current }: Props) {
   const [state, formAction, pending] = useActionState(action, null);
   const [attending, setAttending] = useState<"yes" | "no" | null>(
     current.attending === null ? null : current.attending ? "yes" : "no",
@@ -55,7 +57,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
           </div>
 
           <fieldset>
-            <legend className="mb-2 text-sm text-cream/70">Will you attend?</legend>
+            <legend className="mb-2 text-sm text-cream/70">Will you attend the {eventsLabel}?</legend>
             <div className="flex gap-3">
               <label className={choice}>
                 <input type="radio" name="attending" value="yes" className="sr-only" checked={attending === "yes"} onChange={() => setAttending("yes")} />
@@ -112,7 +114,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
           )}
         </form>
       ) : (
-        <Replied current={current} onChange={() => setEditFrom(state?.id ?? null)} />
+        <Replied current={current} eventsLabel={eventsLabel} onChange={() => setEditFrom(state?.id ?? null)} />
       )}
 
       {state && <Toast key={state.id} ok={state.ok} message={state.message} />}
@@ -121,7 +123,7 @@ export function RsvpForm({ action, guestName, plusOneAllowed, current }: Props) 
 }
 
 // Shown instead of the form once the guest has replied.
-function Replied({ current, onChange }: { current: Current; onChange: () => void }) {
+function Replied({ current, eventsLabel, onChange }: { current: Current; eventsLabel: string; onChange: () => void }) {
   const coming = current.attending === true;
   return (
     <div
@@ -148,13 +150,10 @@ function Replied({ current, onChange }: { current: Current; onChange: () => void
       <h3 className="mt-2 font-script text-4xl text-gold sm:text-5xl">
         {coming ? "You're attending" : "You can't attend"}
       </h3>
+      <p className="mt-1 text-sm uppercase tracking-[0.2em] text-cream/60">{eventsLabel}</p>
 
-      {coming && (
-        <p className="mt-3 text-lg text-cream/90">
-          {current.bringingPlusOne
-            ? `Together with ${current.plusOneName || "your plus one"} · 2 guests`
-            : "Just you · 1 guest"}
-        </p>
+      {coming && current.bringingPlusOne && (
+        <p className="mt-3 text-lg text-cream/90">Together with {current.plusOneName || "your plus one"}</p>
       )}
 
       <p className="mt-4 leading-relaxed text-cream/75">

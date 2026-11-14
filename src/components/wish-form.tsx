@@ -21,7 +21,7 @@ export function WishForm({
   return (
     <form ref={formRef} action={formAction} className="space-y-3 text-left">
       <p className="text-sm text-ink/70">
-        Posting as <strong className="text-maroon">{guestName}</strong>
+        Posting as <strong className="text-brown">{guestName}</strong>
       </p>
       <textarea
         name="message"

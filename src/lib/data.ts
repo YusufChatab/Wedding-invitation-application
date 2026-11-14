@@ -1,10 +1,12 @@
 import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { dummyGuests } from "./dummy-guests";
+import type { EventAccess } from "@/config/wedding";
+import { dummyGuests, TEST_GUESTS } from "./dummy-guests";
 
 export type Invitation = {
   name: string;
   plusOneAllowed: boolean;
+  events: EventAccess;
   attending: boolean | null;
   bringingPlusOne: boolean;
   plusOneName: string | null;
@@ -55,10 +57,16 @@ export async function getInvitation(slug: string): Promise<Invitation | null> {
   return {
     name: row.name,
     plusOneAllowed: row.plus_one_allowed,
+    events: toAccess(row.events),
     attending: row.attending,
     bringingPlusOne: row.bringing_plus_one ?? false,
     plusOneName: row.plus_one_name,
   };
+}
+
+// Before the events migration runs the column is missing: treat as both.
+function toAccess(v: unknown): EventAccess {
+  return v === "akad" || v === "reception" ? v : "both";
 }
 
 export async function submitRsvp(slug: string, input: RsvpInput): Promise<void> {
@@ -96,7 +104,7 @@ export async function listWishes(): Promise<Wish[]> {
 // so the site can be previewed locally. Data resets on server restart.
 // ---------------------------------------------------------------------------
 
-type DemoGuest = { name: string; plusOneAllowed: boolean; rsvp?: RsvpInput };
+type DemoGuest = { name: string; plusOneAllowed: boolean; events: EventAccess; rsvp?: RsvpInput };
 
 const sampleWishes = [
   "Barakallahu lakuma wa baraka 'alaikuma wa jama'a bainakuma fii khair. Congratulations!",
@@ -108,15 +116,16 @@ const sampleWishes = [
 ];
 
 const demo = (() => {
-  // The first 30 dummy guests (except Yusuf Chatab, kept fresh for testing) have already replied.
+  // The first 30 dummy guests (except the test links at the top) have already replied.
   const guests = new Map<string, DemoGuest>(
     dummyGuests(100).map((g, i) => [
       g.slug,
       {
         name: g.name,
         plusOneAllowed: g.plusOneAllowed,
+        events: g.events,
         rsvp:
-          i > 0 && i <= 30
+          i >= TEST_GUESTS && i < TEST_GUESTS + 30
             ? { attending: i % 4 !== 0, bringingPlusOne: g.plusOneAllowed && i % 2 === 0, plusOneName: "" }
             : undefined,
       },
@@ -137,6 +146,7 @@ const demo = (() => {
       return {
         name: g.name,
         plusOneAllowed: g.plusOneAllowed,
+        events: g.events,
         attending: g.rsvp?.attending ?? null,
         bringingPlusOne: g.rsvp?.bringingPlusOne ?? false,
         plusOneName: g.rsvp?.plusOneName || null,

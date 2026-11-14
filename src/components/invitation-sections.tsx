@@ -1,11 +1,11 @@
 // The invitation sections, shared by the personal guest pages and the general home page.
-import { wedding } from "@/config/wedding";
+import { eventsFor, eventsLabel, wedding, type EventAccess } from "@/config/wedding";
 import type { Wish } from "@/lib/data";
 import { Countdown } from "./countdown";
 import { GiftAccounts } from "./gift-accounts";
-import { Divider, FernCorner, FloralSpray, Petals, RumahGadang, SongketBand, Stars } from "./ornaments";
+import { Divider, FernCorner, FloralSpray, Petals, SongketBand, Stars } from "./ornaments";
 
-export const couple = `${wedding.groom.shortName} & ${wedding.bride.shortName}`;
+export const couple = `${wedding.bride.shortName} & ${wedding.groom.shortName}`;
 
 export function Section({
   id,
@@ -30,7 +30,7 @@ export function Section({
       {!dark && <Corners />}
       <div className={`relative mx-auto ${wide ? "max-w-4xl" : "max-w-lg"}`}>
         <div className="reveal" data-anim="zoom">
-          <h2 className={`font-script text-5xl sm:text-6xl ${dark ? "text-gold" : "text-maroon"}`}>{title}</h2>
+          <h2 className={`font-script text-5xl sm:text-6xl ${dark ? "text-gold" : "text-brown"}`}>{title}</h2>
           {subtitle && <p className={`mt-2 text-lg ${dark ? "text-cream/70" : "text-ink/70"}`}>{subtitle}</p>}
           <Divider className="my-6" />
         </div>
@@ -46,8 +46,8 @@ export function Section({
 function Corners() {
   return (
     <>
-      <FernCorner className="absolute left-2 top-2 h-20 w-20 text-mauve/60 sm:h-28 sm:w-28" />
-      <FernCorner className="absolute bottom-2 right-2 h-20 w-20 rotate-180 text-mauve/60 sm:h-28 sm:w-28" />
+      <FernCorner className="absolute left-2 top-2 h-20 w-20 text-brown/50 sm:h-28 sm:w-28" />
+      <FernCorner className="absolute bottom-2 right-2 h-20 w-20 rotate-180 text-brown/50 sm:h-28 sm:w-28" />
     </>
   );
 }
@@ -56,12 +56,12 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-48 text-center text-cream sm:pb-64"
+      className="relative flex min-h-[100lvh] flex-col items-center justify-center overflow-hidden bg-maroon-deep px-6 pb-28 text-center text-cream sm:pb-32"
     >
       <Stars />
       <Petals />
       <FloralSpray className="reveal draw sway-corner absolute -right-4 -top-2 w-44 text-gold/90 sm:right-0 sm:w-72" />
-      <FloralSpray className="reveal draw absolute -left-4 bottom-[170px] w-36 rotate-180 text-gold/75 sm:left-0 sm:bottom-[300px] sm:w-60" />
+      <FloralSpray className="reveal draw absolute -left-4 bottom-8 w-36 rotate-180 text-gold/75 sm:left-0 sm:w-60" />
       <div className="relative z-10">
         <p className="reveal text-sm uppercase tracking-[0.35em] text-gold-light/80 sm:text-base">The Wedding of</p>
         <h1 className="reveal mt-3 font-script text-7xl text-gold sm:text-9xl" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
@@ -72,13 +72,10 @@ export function Hero() {
         </p>
       </div>
       <div className="glow absolute bottom-6 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
-      <div className="reveal absolute bottom-[22px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
-        <RumahGadang className="w-full text-maroon-soft" />
-      </div>
       <SongketBand className="absolute inset-x-0 bottom-0" />
       <a
         href="#verse"
-        className="bounce-down absolute bottom-[240px] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-[400px]"
+        className="bounce-down absolute bottom-14 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center text-xs uppercase tracking-[0.3em] text-gold-light sm:bottom-16"
         aria-label="Scroll down"
       >
         Scroll
@@ -95,7 +92,7 @@ export function Verse() {
     <section id="verse" className="relative overflow-hidden bg-cream px-6 py-16 text-center sm:py-24">
       <Corners />
       <div className="relative mx-auto max-w-2xl">
-        <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-maroon sm:text-3xl sm:leading-loose" data-anim="zoom">
+        <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-brown sm:text-3xl sm:leading-loose" data-anim="zoom">
           وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً ۚ إِنَّ فِي ذَٰلِكَ لَآيَاتٍ لِّقَوْمٍ يَتَفَكَّرُونَ
         </p>
         <Divider className="my-6" />
@@ -105,7 +102,7 @@ export function Verse() {
             tranquility in them, and He placed between you affection and mercy. Indeed, in that are signs for people
             who reflect.&rdquo;
           </p>
-          <p className="mt-3 font-semibold text-maroon">QS. Ar-Rum: 21</p>
+          <p className="mt-3 font-semibold text-brown">QS. Ar-Rum: 21</p>
         </div>
       </div>
     </section>
@@ -120,7 +117,7 @@ export function Couple() {
           <span className="float inline-block">{p.shortName[0]}</span>
         </div>
       </div>
-      <h3 className="mt-5 text-2xl font-semibold text-maroon sm:text-3xl">{p.fullName}</h3>
+      <h3 className="mt-5 text-2xl font-semibold text-brown sm:text-3xl">{p.fullName}</h3>
       <p className="mt-1 text-ink/70">{p.parents}</p>
     </div>
   );
@@ -128,25 +125,30 @@ export function Couple() {
   return (
     <section id="couple" className="scroll-mt-4 bg-cream px-6 pb-16 text-center sm:pb-24">
       <div className="reveal mx-auto max-w-xl">
-        <p className="font-arabic text-xl text-maroon sm:text-2xl">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
-        <p className="mt-2 font-semibold text-maroon">Assalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
+        <p className="font-arabic text-xl text-brown sm:text-2xl">ٱلسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ ٱللَّٰهِ وَبَرَكَاتُهُ</p>
+        <p className="mt-2 font-semibold text-brown">Assalamu&apos;alaikum Warahmatullahi Wabarakatuh</p>
         <p className="mt-4 text-lg leading-relaxed text-ink/80">
           With gratitude for the blessings of Allah SWT, we humbly request the honour of your presence and du&apos;a at
           the wedding of our beloved children:
         </p>
       </div>
       <div className="mx-auto mt-12 flex max-w-4xl flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
-        {person(wedding.groom, "left")}
+        {person(wedding.bride, "left")}
         <p className="reveal font-script text-6xl text-gold md:mt-24" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
           &amp;
         </p>
-        {person(wedding.bride, "right")}
+        {person(wedding.groom, "right")}
       </div>
     </section>
   );
 }
 
-export function Events() {
+export function Events({
+  access = "both",
+}: {
+  access?: EventAccess;
+}) {
+  const events = eventsFor(access);
   return (
     <section id="event" className="relative scroll-mt-4 bg-maroon-deep px-5 py-16 text-center text-cream sm:px-8 sm:py-24">
       <SongketBand className="absolute inset-x-0 top-0" />
@@ -157,8 +159,8 @@ export function Events() {
           <p className="mt-2 text-lg text-cream/70">Insya Allah, it will be held on</p>
           <Divider className="my-6" />
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          {wedding.events.map((e, i) => (
+        <div className={events.length > 1 ? "grid gap-6 md:grid-cols-2" : "mx-auto max-w-md"}>
+          {events.map((e, i) => (
             <div
               key={e.title}
               className="reveal rounded-t-[999px] rounded-b-2xl border border-gold/50 bg-maroon/60 px-6 pb-7 pt-14 transition duration-500 hover:-translate-y-1 hover:border-gold"
@@ -191,13 +193,17 @@ export function Events() {
   );
 }
 
-export function SaveTheDate() {
+export function SaveTheDate({ access = "both" }: { access?: EventAccess }) {
+  const events = eventsFor(access);
+  const first = events[0];
+  const last = events[events.length - 1];
   const fmt = (iso: string) => new Date(iso).toISOString().replace(/[-:]|\.\d{3}/g, "");
   const calendarUrl =
     "https://calendar.google.com/calendar/render?action=TEMPLATE" +
     `&text=${encodeURIComponent(`Wedding of ${couple}`)}` +
-    `&dates=${fmt(wedding.date)}/${fmt(wedding.calendarEnd)}` +
-    `&location=${encodeURIComponent(`${wedding.events[0].venue}, ${wedding.events[0].address}`)}`;
+    `&dates=${fmt(first.start)}/${fmt(last.end)}` +
+    `&details=${encodeURIComponent(eventsLabel(access))}` +
+    `&location=${encodeURIComponent(`${first.venue}, ${first.address}`)}`;
 
   return (
     <section className="bg-maroon px-5 py-16 text-center text-cream sm:py-24">
@@ -207,7 +213,7 @@ export function SaveTheDate() {
           <Divider className="my-6" />
         </div>
         <div className="reveal" style={{ animationDelay: "0.15s" }}>
-          <Countdown date={wedding.date} />
+          <Countdown date={first.start} />
           <a
             href={calendarUrl}
             target="_blank"
@@ -260,10 +266,10 @@ export function WishList({ wishes }: { wishes: Wish[] }) {
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="font-semibold text-maroon">{w.name}</span>
+                <span className="font-semibold text-brown">{w.name}</span>
                 {w.attending !== null && (
                   <span
-                    className={`rounded-full px-2 py-0.5 text-xs ${w.attending ? "bg-maroon/10 text-maroon" : "bg-ink/10 text-ink/70"}`}
+                    className={`rounded-full px-2 py-0.5 text-xs ${w.attending ? "bg-maroon/10 text-brown" : "bg-ink/10 text-ink/70"}`}
                   >
                     {w.attending ? "Attending" : "Not attending"}
                   </span>
@@ -294,12 +300,12 @@ export function Gift() {
 
 export function Closing() {
   return (
-    <section className="relative overflow-hidden bg-maroon-deep px-6 pb-[340px] pt-16 text-center text-cream sm:pb-[34rem] sm:pt-24">
+    <section className="relative overflow-hidden bg-maroon-deep px-6 pb-40 pt-16 text-center text-cream sm:pb-48 sm:pt-24">
       <SongketBand className="absolute inset-x-0 top-0" />
       <Stars />
       <Petals />
       <FloralSpray className="reveal draw sway-corner absolute -right-4 top-4 w-36 text-gold/80 sm:right-0 sm:w-60" />
-      <FloralSpray className="reveal draw absolute -left-4 bottom-[250px] w-32 rotate-180 text-gold/70 sm:left-0 sm:bottom-[340px] sm:w-52" />
+      <FloralSpray className="reveal draw absolute -left-4 bottom-[96px] w-32 rotate-180 text-gold/70 sm:left-0 sm:w-52" />
       <div className="relative z-10 mx-auto max-w-xl">
         <p dir="rtl" lang="ar" className="reveal font-arabic text-2xl leading-loose text-gold-light sm:text-3xl" data-anim="zoom">
           بَارَكَ ٱللَّٰهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ
@@ -318,10 +324,7 @@ export function Closing() {
         </div>
       </div>
       <div className="glow absolute bottom-16 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-rose/30 blur-3xl sm:h-96 sm:w-96" aria-hidden />
-      {/* Sits above the bottom navigation bar, on a songket "ground". */}
-      <div className="reveal absolute bottom-[86px] left-1/2 w-[400px] max-w-[108%] -translate-x-1/2 sm:w-[720px]" data-anim="rise">
-        <RumahGadang className="w-full text-maroon-soft" />
-      </div>
+      {/* Songket strip above the bottom navigation bar. */}
       <div className="absolute inset-x-0 bottom-0 h-[86px] bg-maroon-soft/40" aria-hidden />
       <SongketBand className="absolute inset-x-0 bottom-16" />
     </section>

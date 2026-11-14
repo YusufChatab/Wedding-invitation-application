@@ -8,6 +8,9 @@
 // Expected columns (first sheet, header row; case-insensitive):
 //   Name      – the invitation name shown on the cover, e.g. "Yusuf Chatab"
 //   Plus One  – Yes/No (also accepts Y, 1, true, Ya). Optional, defaults to No.
+//   Event     – Both, Akad or Reception (also Akad Nikah, Resepsi, Walimah,
+//               Semua). Optional, defaults to Both. Needs the events migration
+//               (supabase/migrations/002-invitation-events.sql).
 //   Phone     – optional, kept for your reference
 //
 // Re-running is safe: invitations are matched by their link slug, so existing
@@ -54,6 +57,16 @@ function cellText(cell) {
   return String(v).trim();
 }
 
+// Which events an invitation covers; blank or unknown means both.
+function eventAccess(text) {
+  const t = text.toLowerCase();
+  const akad = /akad|nikah/.test(t);
+  const reception = /recep|resep|walimah/.test(t);
+  if (akad && !reception) return "akad";
+  if (reception && !akad) return "reception";
+  return "both";
+}
+
 const truthy = new Set(["yes", "y", "ya", "1", "true", "✓", "x"]);
 
 const workbook = new ExcelJS.Workbook();
@@ -69,6 +82,7 @@ sheet.eachRow((row, rowNumber) => {
     const h = cellText(cell).toLowerCase();
     if (!cols.name && /(^|\s)(name|nama)/.test(h)) cols.name = col;
     else if (!cols.plusOne && /(plus|\+\s*1|partner)/.test(h)) cols.plusOne = col;
+    else if (!cols.event && /(event|acara|undangan)/.test(h)) cols.event = col;
     else if (!cols.phone && /(phone|wa|whatsapp|hp|telp)/.test(h)) cols.phone = col;
   });
   if (cols.name) headerRow = rowNumber;
@@ -93,10 +107,17 @@ sheet.eachRow((row, rowNumber) => {
     name,
     plus_one_allowed: cols.plusOne ? truthy.has(cellText(row.getCell(cols.plusOne)).toLowerCase()) : false,
     phone: cols.phone ? cellText(row.getCell(cols.phone)) || null : null,
+    // Only sent when the sheet has an Event column, so older sheets still import
+    // before the events migration has been run.
+    ...(cols.event ? { events: eventAccess(cellText(row.getCell(cols.event))) } : {}),
   });
 });
 
-console.log(`Found ${guests.length} guests (${guests.filter((g) => g.plus_one_allowed).length} with plus one).`);
+const count = (ev) => guests.filter((g) => (g.events ?? "both") === ev).length;
+console.log(
+  `Found ${guests.length} guests (${guests.filter((g) => g.plus_one_allowed).length} with plus one; ` +
+    `${count("both")} both events, ${count("akad")} Akad only, ${count("reception")} Reception only).`,
+);
 
 if (!dryRun) {
   const url = process.env.SUPABASE_URL;
@@ -117,8 +138,11 @@ if (!dryRun) {
 }
 
 const csv = (s) => `"${String(s ?? "").replace(/"/g, '""')}"`;
-const lines = ["Name,Plus One,Phone,Link"].concat(
-  guests.map((g) => [g.name, g.plus_one_allowed ? "Yes" : "No", g.phone, `${siteUrl}/${g.slug}`].map(csv).join(",")),
+const eventLabel = { both: "Both", akad: "Akad", reception: "Reception" };
+const lines = ["Name,Plus One,Event,Phone,Link"].concat(
+  guests.map((g) =>
+    [g.name, g.plus_one_allowed ? "Yes" : "No", eventLabel[g.events ?? "both"], g.phone, `${siteUrl}/${g.slug}`].map(csv).join(","),
+  ),
 );
 writeFileSync("guest-links.csv", "﻿" + lines.join("\n"));
 console.log("Wrote guest-links.csv");

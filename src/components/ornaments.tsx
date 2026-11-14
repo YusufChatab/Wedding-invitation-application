@@ -34,50 +34,6 @@ export function Stars({ className = "" }: { className?: string }) {
   );
 }
 
-// Minangkabau Rumah Gadang: a long house on stilts under a roof of curved
-// gonjong horns, with a carved (ukiran) band and windows along the wall.
-export function RumahGadang({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 400 200" className={className} fill="currentColor" aria-hidden>
-      {/* roof with five gonjong peaks */}
-      <path d="M35 6 Q60 70 82 78 Q102 72 112 26 Q120 78 152 86 Q190 82 200 38 Q210 82 248 86 Q280 78 288 26 Q298 72 318 78 Q340 70 365 6 Q354 92 336 118 L64 118 Q46 92 35 6 Z" />
-      {/* finials on the horn tips */}
-      {[
-        [35, 6],
-        [112, 26],
-        [200, 38],
-        [288, 26],
-        [365, 6],
-      ].map(([x, y]) => (
-        <circle key={x} cx={x} cy={y - 3} r="2.5" />
-      ))}
-      {/* walls lean outwards towards the roof */}
-      <path d="M74 118 H326 L313 168 H87 Z" />
-      {/* stilts and ground line */}
-      {[96, 132, 168, 232, 268, 304].map((x) => (
-        <rect key={x} x={x - 3} y="166" width="6" height="32" />
-      ))}
-      <rect x="40" y="196" width="320" height="4" />
-      {/* stairs to the entrance */}
-      <path d="M184 168 H216 L222 198 H178 Z" />
-      {/* lighter details: roof thatch lines, carved band, windows */}
-      <g className="text-gold" opacity="0.35">
-        <path d="M70 108 H330 M80 98 H320" stroke="currentColor" strokeWidth="1.2" fill="none" />
-        <path
-          d="M80 126 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6 l6 -6 l6 6"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          fill="none"
-        />
-        {[104, 136, 168, 216, 248, 280].map((x) => (
-          <rect key={x} x={x} y="140" width="16" height="18" rx="1" />
-        ))}
-        <path d="M190 168 V148 Q200 138 210 148 V168 Z" />
-      </g>
-    </svg>
-  );
-}
-
 // Strip of songket weave: gold pucuak rabuang (bamboo shoot) triangles with a
 // light sweeping across, used to separate sections.
 export function SongketBand({ className = "" }: { className?: string }) {

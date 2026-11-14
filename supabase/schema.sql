@@ -13,6 +13,8 @@ create table if not exists invitations (
   slug text unique not null,              -- used in the link: /yusuf-chatab
   name text not null,                     -- shown on the cover: "Yusuf Chatab"
   plus_one_allowed boolean not null default false,
+  -- which events this invitation covers: both, akad (Akad Nikah) or reception
+  events text not null default 'both' check (events in ('both', 'akad', 'reception')),
   phone text,
   created_at timestamptz not null default now()
 );
@@ -50,6 +52,7 @@ create or replace function get_invitation(p_slug text)
 returns table (
   name text,
   plus_one_allowed boolean,
+  events text,
   attending boolean,
   bringing_plus_one boolean,
   plus_one_name text
@@ -58,7 +61,7 @@ language sql
 security definer
 set search_path = public
 as $$
-  select i.name, i.plus_one_allowed, r.attending, r.bringing_plus_one, r.plus_one_name
+  select i.name, i.plus_one_allowed, i.events, r.attending, r.bringing_plus_one, r.plus_one_name
   from invitations i
   left join rsvps r on r.invitation_id = i.id
   where i.slug = p_slug;
@@ -162,6 +165,7 @@ create or replace view rsvp_summary with (security_invoker = true) as
 select
   i.name,
   i.slug,
+  i.events,
   i.plus_one_allowed,
   case when r.attending is null then 'pending'
        when r.attending then 'attending'

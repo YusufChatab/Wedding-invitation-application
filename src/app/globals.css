@@ -1,20 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Palette from the reference: maroon, mauve, dusty rose and blush, with gold
-     kept as the accent (maroon and gold are the classic Minang songket colours). */
-  --color-maroon-deep: #4f1230;
-  --color-maroon: #701a40;
-  --color-maroon-soft: #7f2c52;
-  --color-mauve: #a06478;
-  --color-rose: #ca9b9b;
-  --color-blush: #ecdace;
-  --color-gold: #d1a95e;
-  --color-gold-light: #efd6a3;
-  --color-cream: #faf3ee;
-  --color-ink: #3b2430;
+  /* Palette from the printed invitation: deep wine with caramel-gold line art
+     for the dark parts, ivory with brown line art and grey text for the light
+     parts. */
+  --color-maroon-deep: #4a0414;
+  --color-maroon: #620c20;
+  --color-maroon-soft: #7a1a2e;
+  --color-brown: #8b5a3c;
+  --color-mauve: #a77b5c;
+  --color-rose: #c99a72;
+  --color-blush: #f1e4d3;
+  --color-gold: #d6a26a;
+  --color-gold-light: #efcc9d;
+  --color-cream: #fdfbf6;
+  --color-ink: #4a4543;
 
-  --font-serif: var(--font-cormorant);
+  --font-serif: var(--font-caladea);
   --font-script: var(--font-great-vibes);
   --font-arabic: var(--font-amiri);
 }
@@ -27,7 +29,7 @@ body {
 
 body {
   color: var(--color-ink);
-  font-family: var(--font-cormorant), Georgia, serif;
+  font-family: var(--font-caladea), Cambria, Georgia, serif;
 }
 
 /* Mihrab-style pointed arch. */
@@ -121,7 +123,7 @@ body {
   height: 22px;
   overflow: hidden;
   background-color: var(--color-maroon-deep);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22' viewBox='0 0 28 22'%3E%3Cg fill='%23d1a95e'%3E%3Crect width='28' height='2'/%3E%3Crect y='20' width='28' height='2'/%3E%3Cpath d='M14 4 L22 18 H6 Z' fill-opacity='0.9'/%3E%3Cpath d='M0 18 L4 11 L8 18 Z M20 18 L24 11 L28 18 Z' fill-opacity='0.5'/%3E%3C/g%3E%3Cpath d='M14 9 L17 15 H11 Z' fill='%234f1230'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='22' viewBox='0 0 28 22'%3E%3Cg fill='%23d6a26a'%3E%3Crect width='28' height='2'/%3E%3Crect y='20' width='28' height='2'/%3E%3Cpath d='M14 4 L22 18 H6 Z' fill-opacity='0.9'/%3E%3Cpath d='M0 18 L4 11 L8 18 Z M20 18 L24 11 L28 18 Z' fill-opacity='0.5'/%3E%3C/g%3E%3Cpath d='M14 9 L17 15 H11 Z' fill='%234a0414'/%3E%3C/svg%3E");
 }
 .songket-band::after {
   content: "";

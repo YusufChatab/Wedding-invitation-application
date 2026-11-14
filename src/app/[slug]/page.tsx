@@ -17,6 +17,7 @@ import {
   Verse,
   WishList,
 } from "@/components/invitation-sections";
+import { eventsLabel } from "@/config/wedding";
 import { rsvpAction, wishAction } from "./actions";
 
 // Every link is personal and shows live RSVPs/wishes, so render on each request.
@@ -37,18 +38,23 @@ export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
   if (!invitation) notFound();
 
   return (
-    <InvitationShell guestName={invitation.name} coupleNames={couple}>
+    <InvitationShell
+      guestName={invitation.name}
+      coupleNames={couple}
+      note={`Invited to the ${eventsLabel(invitation.events)}`}
+    >
       <main className="overflow-x-hidden bg-cream">
         <Hero />
         <Verse />
         <Couple />
-        <Events />
-        <SaveTheDate />
+        <Events access={invitation.events} />
+        <SaveTheDate access={invitation.events} />
 
         <Section id="rsvp" dark title="RSVP" subtitle="Kindly let us know if you can join us">
           <RsvpForm
             action={rsvpAction.bind(null, slug)}
             guestName={invitation.name}
+            eventsLabel={eventsLabel(invitation.events)}
             plusOneAllowed={invitation.plusOneAllowed}
             current={{
               attending: invitation.attending,

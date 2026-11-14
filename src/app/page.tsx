@@ -29,7 +29,7 @@ function PersonalLinkNote({ dark = false }: { dark?: boolean }) {
     <p
       className={`rounded-2xl border px-5 py-4 text-lg leading-relaxed ${dark ? "border-gold/40 bg-maroon/60 text-cream/85" : "border-maroon/15 bg-white/70 text-ink/80"}`}
     >
-      Please open the <strong className={dark ? "text-gold-light" : "text-maroon"}>personal invitation link</strong> you
+      Please open the <strong className={dark ? "text-gold-light" : "text-brown"}>personal invitation link</strong> you
       received from the family to confirm your attendance and send your wishes.
     </p>
   );
