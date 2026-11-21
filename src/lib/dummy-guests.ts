@@ -3,7 +3,7 @@
 
 import type { EventAccess } from "@/config/wedding";
 
-export type DummyGuest = { slug: string; name: string; plusOneAllowed: boolean; events: EventAccess };
+export type DummyGuest = { slug: string; name: string; maxGuests: number; events: EventAccess };
 
 const firstNames = [
   "Ahmad", "Muhammad", "Abdullah", "Fatimah", "Aisyah", "Khadijah", "Umar", "Ali", "Hasan", "Husein",
@@ -16,7 +16,7 @@ const lastNames = [
 ];
 
 // Test links that always start without an RSVP, one per invitation type.
-export const TEST_GUESTS = 5;
+export const TEST_GUESTS = 6;
 
 export function slugify(name: string) {
   return name
@@ -30,11 +30,12 @@ export function slugify(name: string) {
 
 export function dummyGuests(count = 100): DummyGuest[] {
   const out: DummyGuest[] = [
-    { slug: "yusuf-chatab", name: "Yusuf Chatab", plusOneAllowed: true, events: "both" },
-    { slug: "test-akad-only", name: "Test Akad Only", plusOneAllowed: true, events: "akad" },
-    { slug: "test-reception-only", name: "Test Reception Only", plusOneAllowed: true, events: "reception" },
-    { slug: "test-reception-single", name: "Test Reception Single", plusOneAllowed: false, events: "reception" },
-    { slug: "test-akad-single", name: "Test Akad Single", plusOneAllowed: false, events: "akad" },
+    { slug: "yusuf-chatab", name: "Yusuf Chatab", maxGuests: 2, events: "both" },
+    { slug: "test-akad-only", name: "Test Akad Only", maxGuests: 2, events: "akad" },
+    { slug: "test-reception-only", name: "Test Reception Only", maxGuests: 2, events: "reception" },
+    { slug: "test-reception-single", name: "Test Reception Single", maxGuests: 1, events: "reception" },
+    { slug: "test-akad-single", name: "Test Akad Single", maxGuests: 1, events: "akad" },
+    { slug: "test-family", name: "Test Family", maxGuests: 5, events: "both" },
   ];
   const seen = new Set(out.map((g) => g.slug));
   let seed = 7;
@@ -48,9 +49,11 @@ export function dummyGuests(count = 100): DummyGuest[] {
     const slug = slugify(name);
     if (seen.has(slug)) continue;
     seen.add(slug);
-    // Families/couples are already counted as one invitation, so no extra plus one.
-    const pick = out.length % 5; // not from next(), so the names stay the same as before
-    out.push({ slug, name, plusOneAllowed: style > 1 && next() % 2 === 0, events: pick === 0 ? "akad" : pick === 1 ? "reception" : "both" });
+    // Not from next(), so the names stay the same as before.
+    const pick = out.length % 5;
+    const plusOne = style > 1 && next() % 2 === 0;
+    const maxGuests = style === 0 ? 4 : style === 1 ? 2 : plusOne ? 2 : 1;
+    out.push({ slug, name, maxGuests, events: pick === 0 ? "akad" : pick === 1 ? "reception" : "both" });
   }
   return out;
 }

@@ -55,12 +55,8 @@ export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
             action={rsvpAction.bind(null, slug)}
             guestName={invitation.name}
             eventsLabel={eventsLabel(invitation.events)}
-            plusOneAllowed={invitation.plusOneAllowed}
-            current={{
-              attending: invitation.attending,
-              bringingPlusOne: invitation.bringingPlusOne,
-              plusOneName: invitation.plusOneName,
-            }}
+            maxGuests={invitation.maxGuests}
+            current={{ attending: invitation.attending, guestCount: invitation.guestCount }}
           />
         </Section>
 

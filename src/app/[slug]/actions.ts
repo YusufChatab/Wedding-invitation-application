@@ -16,8 +16,8 @@ export async function rsvpAction(slug: string, _prev: FormState, formData: FormD
   try {
     await submitRsvp(slug, {
       attending: attending === "yes",
-      bringingPlusOne: formData.get("plusOne") === "yes",
-      plusOneName: String(formData.get("plusOneName") ?? "").trim().slice(0, 100),
+      // Capped at the invitation's seats by the database.
+      guests: Number.parseInt(String(formData.get("guests") ?? "1"), 10) || 1,
     });
   } catch {
     return result(false, "Something went wrong. Please try again.");

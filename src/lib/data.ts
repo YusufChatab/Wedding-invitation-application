@@ -5,11 +5,12 @@ import { dummyGuests, TEST_GUESTS } from "./dummy-guests";
 
 export type Invitation = {
   name: string;
-  plusOneAllowed: boolean;
+  // How many people the invitation is for (the "pax" column): 1, or more for couples and families.
+  maxGuests: number;
   events: EventAccess;
   attending: boolean | null;
-  bringingPlusOne: boolean;
-  plusOneName: string | null;
+  // How many said they're coming (0 when not attending).
+  guestCount: number;
 };
 
 export type Wish = {
@@ -22,8 +23,7 @@ export type Wish = {
 
 export type RsvpInput = {
   attending: boolean;
-  bringingPlusOne: boolean;
-  plusOneName: string;
+  guests: number;
 };
 
 const url = process.env.SUPABASE_URL;
@@ -56,26 +56,24 @@ export async function getInvitation(slug: string): Promise<Invitation | null> {
   if (!row) return null;
   return {
     name: row.name,
-    plusOneAllowed: row.plus_one_allowed,
+    maxGuests: Math.max(1, row.max_guests ?? 1),
     events: toAccess(row.events),
     attending: row.attending,
-    bringingPlusOne: row.bringing_plus_one ?? false,
-    plusOneName: row.plus_one_name,
+    guestCount: row.guest_count ?? 0,
   };
 }
 
-// Before the events migration runs the column is missing: treat as both.
+// Anything unexpected in the events column: treat as both.
 function toAccess(v: unknown): EventAccess {
   return v === "akad" || v === "reception" ? v : "both";
 }
 
 export async function submitRsvp(slug: string, input: RsvpInput): Promise<void> {
   if (demoEnabled()) return demo.submitRsvp(slug, input);
-  const { error } = await db().rpc("submit_rsvp", {
+  const { error } = await db().rpc("submit_rsvp_guests", {
     p_slug: slug,
     p_attending: input.attending,
-    p_bringing_plus_one: input.bringingPlusOne,
-    p_plus_one_name: input.plusOneName,
+    p_guests: input.guests,
   });
   if (error) throw error;
 }
@@ -104,7 +102,7 @@ export async function listWishes(): Promise<Wish[]> {
 // so the site can be previewed locally. Data resets on server restart.
 // ---------------------------------------------------------------------------
 
-type DemoGuest = { name: string; plusOneAllowed: boolean; events: EventAccess; rsvp?: RsvpInput };
+type DemoGuest = { name: string; maxGuests: number; events: EventAccess; rsvp?: RsvpInput };
 
 const sampleWishes = [
   "Barakallahu lakuma wa baraka 'alaikuma wa jama'a bainakuma fii khair. Congratulations!",
@@ -122,11 +120,11 @@ const demo = (() => {
       g.slug,
       {
         name: g.name,
-        plusOneAllowed: g.plusOneAllowed,
+        maxGuests: g.maxGuests,
         events: g.events,
         rsvp:
           i >= TEST_GUESTS && i < TEST_GUESTS + 30
-            ? { attending: i % 4 !== 0, bringingPlusOne: g.plusOneAllowed && i % 2 === 0, plusOneName: "" }
+            ? { attending: i % 4 !== 0, guests: i % 4 !== 0 ? 1 + (i % g.maxGuests) : 0 }
             : undefined,
       },
     ]),
@@ -145,18 +143,17 @@ const demo = (() => {
       if (!g) return null;
       return {
         name: g.name,
-        plusOneAllowed: g.plusOneAllowed,
+        maxGuests: g.maxGuests,
         events: g.events,
         attending: g.rsvp?.attending ?? null,
-        bringingPlusOne: g.rsvp?.bringingPlusOne ?? false,
-        plusOneName: g.rsvp?.plusOneName || null,
+        guestCount: g.rsvp?.guests ?? 0,
       };
     },
     async submitRsvp(slug: string, input: RsvpInput) {
       const g = guests.get(slug);
       if (!g) throw new Error("invitation not found");
-      const plus = input.attending && g.plusOneAllowed && input.bringingPlusOne;
-      g.rsvp = { attending: input.attending, bringingPlusOne: plus, plusOneName: plus ? input.plusOneName : "" };
+      const count = input.attending ? Math.min(Math.max(1, input.guests), g.maxGuests) : 0;
+      g.rsvp = { attending: input.attending, guests: count };
       for (const w of wishes) if (w.name === g.name) w.attending = input.attending;
     },
     async addWish(slug: string, message: string) {

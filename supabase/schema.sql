@@ -1,5 +1,6 @@
 -- Wedding invitation schema.
 -- Run this once in Supabase: Dashboard → SQL Editor → New query → paste → Run.
+-- After this file, also run the files in supabase/migrations/ in order (002, 003...).
 --
 -- Security model: guests never get direct table access. The public (anon) key
 -- can only call the functions below, which look an invitation up by its slug,

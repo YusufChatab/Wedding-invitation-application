@@ -5,14 +5,15 @@ import type { FormState } from "@/app/[slug]/actions";
 import { SongketBand } from "./ornaments";
 import { Toast } from "./toast";
 
-type Current = { attending: boolean | null; bringingPlusOne: boolean; plusOneName: string | null };
+type Current = { attending: boolean | null; guestCount: number };
 
 type Props = {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   guestName: string;
   // The events this guest is invited to, e.g. "Akad Nikah".
   eventsLabel: string;
-  plusOneAllowed: boolean;
+  // How many people the invitation is for; above 1 the guest picks how many are coming.
+  maxGuests: number;
   current: Current;
 };
 
@@ -24,12 +25,13 @@ const card =
 const choice =
   "flex-1 cursor-pointer rounded-xl border border-gold/40 bg-maroon-deep/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-maroon-deep has-[:checked]:font-semibold";
 
-export function RsvpForm({ action, guestName, eventsLabel, plusOneAllowed, current }: Props) {
+export function RsvpForm({ action, guestName, eventsLabel, maxGuests, current }: Props) {
   const [state, formAction, pending] = useActionState(action, null);
   const [attending, setAttending] = useState<"yes" | "no" | null>(
     current.attending === null ? null : current.attending ? "yes" : "no",
   );
-  const [plusOne, setPlusOne] = useState<"yes" | "no">(current.bringingPlusOne ? "yes" : "no");
+  // Default to everyone on the invitation, or to the earlier answer.
+  const [guests, setGuests] = useState(current.guestCount > 0 ? Math.min(current.guestCount, maxGuests) : maxGuests);
 
   // "Change my answer" remembers which result was showing when it was clicked;
   // the next successful submit closes the form again.
@@ -70,28 +72,17 @@ export function RsvpForm({ action, guestName, eventsLabel, plusOneAllowed, curre
             </div>
           </fieldset>
 
-          {plusOneAllowed && attending === "yes" && (
-            <fieldset className="pop-in space-y-3">
-              <legend className="mb-2 text-sm text-cream/70">Are you bringing a plus one?</legend>
-              <div className="flex gap-3">
-                <label className={choice}>
-                  <input type="radio" name="plusOne" value="no" className="sr-only" checked={plusOne === "no"} onChange={() => setPlusOne("no")} />
-                  Just me
-                </label>
-                <label className={choice}>
-                  <input type="radio" name="plusOne" value="yes" className="sr-only" checked={plusOne === "yes"} onChange={() => setPlusOne("yes")} />
-                  Me + 1
-                </label>
+          {maxGuests > 1 && attending === "yes" && (
+            <fieldset className="pop-in">
+              <legend className="mb-2 text-sm text-cream/70">How many of you will attend?</legend>
+              <div className="flex flex-wrap gap-3">
+                {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
+                  <label key={n} className={`${choice} min-w-[4.5rem]`}>
+                    <input type="radio" name="guests" value={n} className="sr-only" checked={guests === n} onChange={() => setGuests(n)} />
+                    {n === 1 ? "Just me" : `${n} people`}
+                  </label>
+                ))}
               </div>
-              {plusOne === "yes" && (
-                <input
-                  name="plusOneName"
-                  defaultValue={current.plusOneName ?? ""}
-                  maxLength={100}
-                  placeholder="Plus one's name (optional)"
-                  className="pop-in w-full rounded-xl border border-gold/30 bg-maroon-deep/50 px-4 py-3 text-base text-cream placeholder:text-cream/40 focus:border-gold focus:outline-none"
-                />
-              )}
             </fieldset>
           )}
 
@@ -127,7 +118,7 @@ function Replied({ current, eventsLabel, onChange }: { current: Current; eventsL
   const coming = current.attending === true;
   return (
     <div
-      key={`${current.attending}-${current.bringingPlusOne}`}
+      key={`${current.attending}-${current.guestCount}`}
       className={`${card} pop-in`}
     >
       <SongketBand className="relative -mx-5 -mt-7 mb-6 sm:-mx-8 sm:-mt-8" />
@@ -151,10 +142,6 @@ function Replied({ current, eventsLabel, onChange }: { current: Current; eventsL
         {coming ? "You're attending" : "You can't attend"}
       </h3>
       <p className="mt-1 text-sm uppercase tracking-[0.2em] text-cream/60">{eventsLabel}</p>
-
-      {coming && current.bringingPlusOne && (
-        <p className="mt-3 text-lg text-cream/90">Together with {current.plusOneName || "your plus one"}</p>
-      )}
 
       <p className="mt-4 leading-relaxed text-cream/75">
         {coming
