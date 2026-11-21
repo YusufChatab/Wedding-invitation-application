@@ -12,13 +12,13 @@ export type EventAccess = "both" | EventId;
 export const wedding = {
   groom: {
     shortName: "Raziq",
-    fullName: "Raziq",
-    parents: "Son of Mr. Chatab & Mrs. Chatab",
+    fullName: "Raziq Muhammad Chatab",
+    parents: "Eldest son of Mr. Rudi Yandri Chatab & Mrs. Heirani Khairul",
   },
   bride: {
     shortName: "Farah",
-    fullName: "Farah",
-    parents: "Daughter of Mr. Rahman & Mrs. Rahman",
+    fullName: "Farah Utari Jasmine",
+    parents: "Second daughter of Mr. Nugroho & Mrs. Shinta Damayanti",
   },
 
   dateLabel: "Sunday, 6 December 2026",
@@ -50,9 +50,8 @@ export const wedding = {
   ],
 
   // Bank accounts for wedding gifts (shown in the "Wedding Gift" section).
-  // PLACEHOLDERS: replace with the real accounts before sharing.
   gifts: [
-    { bank: "BCA", accountNumber: "1234567890", accountName: "Farah" },
+    { bank: "BCA", accountNumber: "6080426109", accountName: "Farah Utari Jasmine" },
   ],
 
   // Background sound. Leave empty for the built-in nature sounds, or put an
