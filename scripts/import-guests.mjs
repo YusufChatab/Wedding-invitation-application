@@ -12,8 +12,8 @@
 //               Akad Nikah, Resepsi, Walimah, "Resepsi & Akad" as values).
 //               Optional, defaults to both.
 //   Pax       – how many people the invitation is for (also Jumlah, Guests).
-//               Blank or not a number counts as 1.
-//   Plus One  – Yes/No, older sheets only: Yes means 2 people.
+//               Blank or not a number counts as 1. Above 1, the guest picks
+//               how many are coming.
 //   Phone     – optional, kept for your reference
 // Needs supabase/migrations/002-invitation-events.sql and 003-guest-count.sql.
 //
@@ -71,8 +71,6 @@ function eventAccess(text) {
   return "both";
 }
 
-const truthy = new Set(["yes", "y", "ya", "1", "true", "✓", "x"]);
-
 const workbook = new ExcelJS.Workbook();
 await workbook.xlsx.readFile(file);
 
@@ -92,7 +90,6 @@ for (const sheet of workbook.worksheets) {
       if (!cols.name && /(^|\s)(name|nama)/.test(h)) cols.name = col;
       else if (!cols.event && /(event|acara|undangan|resep|akad)/.test(h)) cols.event = col;
       else if (!cols.pax && /(pax|jumlah|guests|orang|seat)/.test(h)) cols.pax = col;
-      else if (!cols.plusOne && /(plus|\+\s*1|partner)/.test(h)) cols.plusOne = col;
       else if (!cols.phone && /(phone|wa|whatsapp|hp|telp)/.test(h)) cols.phone = col;
     });
     if (cols.name) headerRow = rowNumber;
@@ -113,8 +110,6 @@ for (const sheet of workbook.worksheets) {
       const n = Number.parseInt(raw, 10);
       if (n >= 1) maxGuests = Math.min(n, 20);
       else notes.push(`${side} row ${rowNumber} "${name}": pax "${raw}" is not a number, using 1.`);
-    } else if (cols.plusOne && truthy.has(cellText(row.getCell(cols.plusOne)).toLowerCase())) {
-      maxGuests = 2;
     }
 
     const base = slugify(name) || "guest";
@@ -173,3 +168,120 @@ const lines = ["Guest of,Name,Event,Pax,Phone,Link"].concat(
 );
 writeFileSync("guest-links.csv", "﻿" + lines.join("\n"));
 console.log("Wrote guest-links.csv");
+
+await writeWorkbook("guest-links.xlsx");
+console.log("Wrote guest-links.xlsx");
+
+// The same list as a formatted workbook: a summary sheet, one sheet per side
+// (Farah, Raziq) and one with everyone, in the invitation's colours.
+async function writeWorkbook(path) {
+  const wine = "FF4A0414";
+  const goldLight = "FFEFCC9D";
+  const ivory = "FFFDFBF6";
+  const eventFill = { both: "FFEFCC9D", akad: "FFF1E4D3", reception: "FFF6EDE4" };
+  const thin = { style: "thin", color: { argb: "FFE5D6C6" } };
+  const border = { top: thin, left: thin, bottom: thin, right: thin };
+  const url = (g) => `${siteUrl}/${g.slug}`;
+
+  const wb = new ExcelJS.Workbook();
+  wb.creator = "Wedding invitation";
+
+  // Summary
+  const sum = wb.addWorksheet("Summary", { properties: { tabColor: { argb: wine } } });
+  sum.columns = [{ width: 26 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 14 }];
+  sum.mergeCells("A1:E1");
+  sum.getCell("A1").value = "Farah & Raziq · Guest Links";
+  sum.getCell("A1").font = { name: "Cambria", size: 18, bold: true, color: { argb: wine } };
+  sum.mergeCells("A2:E2");
+  sum.getCell("A2").value = `${siteUrl.replace(/^https?:\/\//, "")} · ${guests.length} invitations · up to ${seats} people`;
+  sum.getCell("A2").font = { italic: true, color: { argb: "FF8B5A3C" } };
+  sum.addRow([]);
+  const head = sum.addRow(["Guest of", "Akad only", "Resepsi only", "Akad & Resepsi", "People (pax)"]);
+  const sides = [...new Set(guests.map((g) => g.side))];
+  for (const side of [...sides, "Total"]) {
+    const list = side === "Total" ? guests : guests.filter((g) => g.side === side);
+    const n = (ev) => list.filter((g) => g.events === ev).length;
+    const row = sum.addRow([side, n("akad"), n("reception"), n("both"), list.reduce((s, g) => s + g.max_guests, 0)]);
+    if (side === "Total") row.font = { bold: true };
+  }
+  for (let r = head.number; r <= head.number + sides.length + 1; r++) {
+    sum.getRow(r).eachCell((c, col) => {
+      c.border = border;
+      if (col > 1) c.alignment = { horizontal: "center" };
+    });
+  }
+  head.eachCell((c) => {
+    c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: wine } };
+    c.font = { bold: true, color: { argb: goldLight } };
+  });
+
+  sum.addRow([]);
+  const exHead = sum.addRow(["Example links (one per type)"]);
+  exHead.font = { bold: true, size: 12, color: { argb: wine } };
+  const seen = new Set();
+  for (const ev of ["akad", "reception", "both"]) {
+    for (const size of ["1", "2", "3+"]) {
+      const g = guests.find((x) => x.events === ev && (x.max_guests >= 3 ? "3+" : String(x.max_guests)) === size);
+      if (!g || seen.has(g.slug)) continue;
+      seen.add(g.slug);
+      const row = sum.addRow([`${eventLabel[ev]} · ${g.max_guests} pax`, g.name]);
+      sum.mergeCells(`C${row.number}:E${row.number}`);
+      row.getCell(3).value = { text: url(g), hyperlink: url(g) };
+      row.getCell(3).font = { color: { argb: "FF1155CC" }, underline: true };
+    }
+  }
+
+  // Guest sheets
+  const addGuestSheet = (title, list, withSide) => {
+    const ws = wb.addWorksheet(title, { views: [{ state: "frozen", ySplit: 1 }] });
+    ws.columns = [
+      { header: "No", key: "no", width: 6 },
+      ...(withSide ? [{ header: "Guest of", key: "side", width: 11 }] : []),
+      { header: "Name", key: "name", width: 34 },
+      { header: "Event", key: "event", width: 17 },
+      { header: "Pax", key: "pax", width: 7 },
+      { header: "Link", key: "link", width: 62 },
+    ];
+    list.forEach((g, i) => {
+      const row = ws.addRow({
+        no: i + 1,
+        side: g.side,
+        name: g.name,
+        event: eventLabel[g.events],
+        pax: g.max_guests,
+        link: { text: url(g), hyperlink: url(g) },
+      });
+      row.eachCell((c) => {
+        c.border = border;
+        c.alignment = { vertical: "middle" };
+        if (i % 2 === 1) c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: ivory } };
+      });
+      const ev = row.getCell("event");
+      ev.fill = { type: "pattern", pattern: "solid", fgColor: { argb: eventFill[g.events] } };
+      ev.alignment = { horizontal: "center", vertical: "middle" };
+      row.getCell("no").alignment = { horizontal: "center" };
+      row.getCell("pax").alignment = { horizontal: "center" };
+      row.getCell("link").font = { color: { argb: "FF1155CC" }, underline: true };
+    });
+    const header = ws.getRow(1);
+    header.height = 22;
+    header.eachCell((c) => {
+      c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: wine } };
+      c.font = { bold: true, color: { argb: goldLight } };
+      c.alignment = { horizontal: "center", vertical: "middle" };
+      c.border = border;
+    });
+    ws.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: ws.columns.length } };
+    // Totals under the list
+    const paxCol = ws.getColumn("pax").letter;
+    const total = ws.addRow([]);
+    total.getCell("name").value = `${list.length} invitations`;
+    total.getCell("pax").value = { formula: `SUM(${paxCol}2:${paxCol}${list.length + 1})`, result: list.reduce((s, g) => s + g.max_guests, 0) };
+    total.font = { bold: true, color: { argb: wine } };
+    total.getCell("pax").alignment = { horizontal: "center" };
+  };
+  for (const side of sides) addGuestSheet(side, guests.filter((g) => g.side === side), false);
+  addGuestSheet("All guests", guests, true);
+
+  await wb.xlsx.writeFile(path);
+}

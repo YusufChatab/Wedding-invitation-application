@@ -13,12 +13,14 @@ export const wedding = {
   groom: {
     shortName: "Raziq",
     fullName: "Raziq Muhammad Chatab",
-    parents: "Eldest son of Mr. Rudi Yandri Chatab & Mrs. Heirani Khairul",
+    relation: "Eldest son of",
+    parents: ["Mr. Rudi Yandri Chatab", "Mrs. Heirani Khairul"],
   },
   bride: {
     shortName: "Farah",
     fullName: "Farah Utari Jasmine",
-    parents: "Second daughter of Mr. Nugroho & Mrs. Shinta Damayanti",
+    relation: "Second daughter of",
+    parents: ["Mr. Nugroho", "Mrs. Shinta Damayanti"],
   },
 
   dateLabel: "Sunday, 6 December 2026",
@@ -52,6 +54,7 @@ export const wedding = {
   // Bank accounts for wedding gifts (shown in the "Wedding Gift" section).
   gifts: [
     { bank: "BCA", accountNumber: "6080426109", accountName: "Farah Utari Jasmine" },
+    { bank: "BCA", accountNumber: "0712228227", accountName: "Raziq Muhammad Chatab" },
   ],
 
   // Background sound. Leave empty for the built-in nature sounds, or put an

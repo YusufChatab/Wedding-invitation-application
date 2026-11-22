@@ -117,8 +117,18 @@ export function Couple() {
           <span className="float inline-block">{p.shortName[0]}</span>
         </div>
       </div>
-      <h3 className="mt-5 text-2xl font-semibold text-brown sm:text-3xl">{p.fullName}</h3>
-      <p className="mt-1 text-ink/70">{p.parents}</p>
+      <h3 className="mt-5 text-balance text-2xl font-semibold text-brown sm:text-3xl">{p.fullName}</h3>
+      {/* "Second daughter of" on its own line; each parent's name is kept whole,
+          so a long pair only breaks at the "&". */}
+      <p className="mt-2 text-sm uppercase tracking-[0.2em] text-ink/60">{p.relation}</p>
+      <p className="mt-1 text-balance text-ink/80">
+        {p.parents.map((name, i) => (
+          <span key={name}>
+            {i > 0 && " & "}
+            <span className="whitespace-nowrap">{name}</span>
+          </span>
+        ))}
+      </p>
     </div>
   );
 

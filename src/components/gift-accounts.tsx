@@ -41,7 +41,7 @@ export function GiftAccounts() {
             <span className="h-7 w-10 rounded-md bg-gradient-to-br from-gold-light to-gold opacity-90" aria-hidden />
           </div>
           <p className="mt-6 font-mono text-2xl tracking-[0.15em] text-cream">{g.accountNumber}</p>
-          <p className="mt-1 text-sm uppercase tracking-[0.2em] text-cream/70">a.n. {g.accountName}</p>
+          <p className="mt-1 text-balance text-sm uppercase tracking-[0.1em] text-cream/70">a.n. {g.accountName}</p>
 
           <button
             type="button"

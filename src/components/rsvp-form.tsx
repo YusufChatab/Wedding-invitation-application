@@ -30,8 +30,11 @@ export function RsvpForm({ action, guestName, eventsLabel, maxGuests, current }:
   const [attending, setAttending] = useState<"yes" | "no" | null>(
     current.attending === null ? null : current.attending ? "yes" : "no",
   );
-  // Default to everyone on the invitation, or to the earlier answer.
-  const [guests, setGuests] = useState(current.guestCount > 0 ? Math.min(current.guestCount, maxGuests) : maxGuests);
+  // Default to the earlier answer; otherwise "Just me" for a plus-one invitation
+  // and the whole family for larger ones.
+  const [guests, setGuests] = useState(
+    current.guestCount > 0 ? Math.min(current.guestCount, maxGuests) : maxGuests === 2 ? 1 : maxGuests,
+  );
 
   // "Change my answer" remembers which result was showing when it was clicked;
   // the next successful submit closes the form again.
@@ -79,7 +82,7 @@ export function RsvpForm({ action, guestName, eventsLabel, maxGuests, current }:
                 {Array.from({ length: maxGuests }, (_, i) => i + 1).map((n) => (
                   <label key={n} className={`${choice} min-w-[4.5rem]`}>
                     <input type="radio" name="guests" value={n} className="sr-only" checked={guests === n} onChange={() => setGuests(n)} />
-                    {n === 1 ? "Just me" : `${n} people`}
+                    {n === 1 ? "Just me" : maxGuests === 2 ? "Me + 1" : `${n} people`}
                   </label>
                 ))}
               </div>

@@ -52,7 +52,7 @@ export function dummyGuests(count = 100): DummyGuest[] {
     // Not from next(), so the names stay the same as before.
     const pick = out.length % 5;
     const plusOne = style > 1 && next() % 2 === 0;
-    const maxGuests = style === 0 ? 4 : style === 1 ? 2 : plusOne ? 2 : 1;
+    const maxGuests = style === 0 ? 4 : style === 1 || plusOne ? 2 : 1;
     out.push({ slug, name, maxGuests, events: pick === 0 ? "akad" : pick === 1 ? "reception" : "both" });
   }
   return out;
