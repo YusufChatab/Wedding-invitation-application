@@ -75,6 +75,13 @@ export function RsvpForm({ action, guestName, eventsLabel, maxGuests, current }:
             </div>
           </fieldset>
 
+          {maxGuests === 1 && attending === "yes" && (
+            <div className="pop-in">
+              <label className="mb-1 block text-sm text-cream/70">Number of guests</label>
+              <div className="rounded-xl border border-gold/30 bg-maroon-deep/50 px-4 py-3 text-lg">1 guest</div>
+            </div>
+          )}
+
           {maxGuests > 1 && attending === "yes" && (
             <fieldset className="pop-in">
               <legend className="mb-2 text-sm text-cream/70">How many of you will attend?</legend>

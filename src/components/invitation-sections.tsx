@@ -114,7 +114,9 @@ export function Couple() {
     <div className="reveal flex flex-col items-center" data-anim={anim}>
       <div className="arch flex h-48 w-40 items-center justify-center border-2 border-gold bg-maroon p-1.5 shadow-xl shadow-maroon/20 transition duration-500 hover:-translate-y-1 sm:h-60 sm:w-48">
         <div className="arch flex h-full w-full items-center justify-center bg-maroon-deep font-script text-6xl text-gold sm:text-7xl">
-          <span className="float inline-block">{p.shortName[0]}</span>
+          {/* The script capitals swash past their own box; iPhone Safari clips an
+              animated element to that box, so pad it to fit the whole letter. */}
+          <span className="float inline-block px-6 py-4 leading-none">{p.shortName[0]}</span>
         </div>
       </div>
       <h3 className="mt-5 text-balance text-2xl font-semibold text-brown sm:text-3xl">{p.fullName}</h3>
