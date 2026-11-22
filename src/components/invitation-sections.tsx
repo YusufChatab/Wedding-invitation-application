@@ -146,7 +146,8 @@ export function Couple() {
       </div>
       <div className="mx-auto mt-12 flex max-w-4xl flex-col items-center gap-6 md:flex-row md:items-start md:justify-center md:gap-10">
         {person(wedding.bride, "left")}
-        <p className="reveal font-script text-6xl text-gold md:mt-24" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
+        {/* Padded so iPhone Safari does not clip the "&" swash while it animates in. */}
+        <p className="reveal px-6 py-4 font-script text-6xl leading-none text-gold md:mt-20" data-anim="zoom" style={{ animationDelay: "0.2s" }}>
           &amp;
         </p>
         {person(wedding.groom, "right")}
