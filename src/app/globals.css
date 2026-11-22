@@ -27,6 +27,22 @@ body {
   background: var(--color-maroon-deep);
 }
 
+/* Keep the same colours when the phone is in dark mode. Browsers that darken
+   pages on their own (Chrome auto-dark, Samsung Internet) skip sites that
+   declare their colour scheme, so declare it here as well as in the meta tag. */
+:root {
+  color-scheme: only light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: only light;
+  }
+  html,
+  body {
+    background: var(--color-maroon-deep);
+  }
+}
+
 body {
   color: var(--color-ink);
   font-family: var(--font-caladea), Cambria, Georgia, serif;

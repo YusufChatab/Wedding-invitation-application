@@ -33,7 +33,9 @@ export const metadata: Metadata = {
 // Colours the phone's browser bar to match the invitation instead of white.
 export const viewport: Viewport = {
   themeColor: "#4a0414",
-  colorScheme: "dark",
+  // "only light" tells phone browsers with a dark mode (Chrome's auto-dark,
+  // Samsung Internet) not to re-colour the invitation; it has its own colours.
+  colorScheme: "only light",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

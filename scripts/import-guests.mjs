@@ -15,6 +15,9 @@
 //               Blank or not a number counts as 1. Above 1, the guest picks
 //               how many are coming.
 //   Phone     – optional, kept for your reference
+//   Link      – optional: the guest's existing link (or just the part after
+//               the last "/"). Keeps that link when you correct a name.
+//               Leave it empty for new guests and one is made from the name.
 // Needs supabase/migrations/002-invitation-events.sql and 003-guest-count.sql.
 //
 // Re-running is safe: invitations are matched by their link slug, so existing
@@ -77,6 +80,11 @@ await workbook.xlsx.readFile(file);
 const guests = [];
 const used = new Map();
 const notes = [];
+const fixedSlugs = new Set(); // links given in a Link column, reserved before any new ones are made
+const sheetCols = new Map();
+
+// The link part of a Link cell: "https://site/tante-lela" or "tante-lela" -> "tante-lela".
+const linkSlug = (text) => text.split("?")[0].replace(/\/+$/, "").split("/").pop().trim().toLowerCase();
 
 for (const sheet of workbook.worksheets) {
   const side = sheet.name.trim();
@@ -90,7 +98,8 @@ for (const sheet of workbook.worksheets) {
       if (!cols.name && /(^|\s)(name|nama)/.test(h)) cols.name = col;
       else if (!cols.event && /(event|acara|undangan|resep|akad)/.test(h)) cols.event = col;
       else if (!cols.pax && /(pax|jumlah|guests|orang|seat)/.test(h)) cols.pax = col;
-      else if (!cols.phone && /(phone|wa|whatsapp|hp|telp)/.test(h)) cols.phone = col;
+      else if (!cols.phone && /(phone|whatsapp|^wa$|^hp$|telp)/.test(h)) cols.phone = col;
+      else if (!cols.link && /(link|slug|url)/.test(h)) cols.link = col;
     });
     if (cols.name) headerRow = rowNumber;
   });
@@ -98,6 +107,22 @@ for (const sheet of workbook.worksheets) {
     notes.push(`Sheet "${side}": no "Name" column, skipped.`);
     continue;
   }
+  sheetCols.set(sheet, { cols, headerRow });
+  if (cols.link) {
+    sheet.eachRow((row, rowNumber) => {
+      if (rowNumber <= headerRow || !cellText(row.getCell(cols.name))) return;
+      const slug = linkSlug(cellText(row.getCell(cols.link)));
+      if (!slug) return;
+      if (fixedSlugs.has(slug)) notes.push(`Link "${slug}" is used on more than one row (${side} row ${rowNumber}).`);
+      fixedSlugs.add(slug);
+    });
+  }
+}
+
+for (const sheet of workbook.worksheets) {
+  if (!sheetCols.has(sheet)) continue;
+  const side = sheet.name.trim();
+  const { cols, headerRow } = sheetCols.get(sheet);
 
   sheet.eachRow((row, rowNumber) => {
     if (rowNumber <= headerRow) return;
@@ -112,13 +137,20 @@ for (const sheet of workbook.worksheets) {
       else notes.push(`${side} row ${rowNumber} "${name}": pax "${raw}" is not a number, using 1.`);
     }
 
-    const base = slugify(name) || "guest";
-    const n = (used.get(base) ?? 0) + 1;
-    used.set(base, n);
-    if (n > 1) notes.push(`"${name}" (${side} row ${rowNumber}) appears more than once: link /${base}-${n}.`);
+    let slug = cols.link ? linkSlug(cellText(row.getCell(cols.link))) : "";
+    if (!slug) {
+      const base = slugify(name) || "guest";
+      let n = used.get(base) ?? 0;
+      do {
+        n++;
+        slug = n === 1 ? base : `${base}-${n}`;
+      } while (fixedSlugs.has(slug));
+      used.set(base, n);
+      if (n > 1) notes.push(`"${name}" (${side} row ${rowNumber}) shares a name with another guest: link /${slug}.`);
+    }
 
     guests.push({
-      slug: n === 1 ? base : `${base}-${n}`,
+      slug,
       name,
       side,
       events: cols.event ? eventAccess(cellText(row.getCell(cols.event))) : "both",
