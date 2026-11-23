@@ -17,7 +17,7 @@ import {
   Verse,
   WishList,
 } from "@/components/invitation-sections";
-import { eventsLabel } from "@/config/wedding";
+import { eventsLabel, wedding } from "@/config/wedding";
 import { rsvpAction, wishAction } from "./actions";
 
 // Every link is personal and shows live RSVPs/wishes, so render on each request.
@@ -26,8 +26,17 @@ export const instant = false;
 export async function generateMetadata({ params }: PageProps<"/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const inv = await getInvitation(slug);
+  const title = inv ? `${inv.name} — The Wedding of ${couple}` : `The Wedding of ${couple}`;
+  // Link previews read og:title rather than <title>. A page's openGraph replaces
+  // the layout's as a whole, so repeat the shared fields too.
+  const description = `${wedding.dateLabel} · You are invited to celebrate with us.`;
+  // The picture from app/opengraph-image.tsx, which isn't carried over once the
+  // page sets its own openGraph.
+  const images = [{ url: "/opengraph-image", width: 1200, height: 630, alt: `The Wedding of ${couple}` }];
   return {
-    title: inv ? `${inv.name} — The Wedding of ${couple}` : `The Wedding of ${couple}`,
+    title,
+    openGraph: { type: "website", siteName: `The Wedding of ${couple}`, title, description, locale: "id_ID", images },
+    twitter: { card: "summary_large_image", title, description, images },
   };
 }
 

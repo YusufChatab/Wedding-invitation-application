@@ -10,6 +10,9 @@ export type EventId = "akad" | "reception";
 export type EventAccess = "both" | EventId;
 
 export const wedding = {
+  // The live address, used for full links in link previews.
+  siteUrl: "https://www.farahandraziqweddinginvitation.com",
+
   groom: {
     shortName: "Raziq",
     fullName: "Raziq Muhammad Chatab",

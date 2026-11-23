@@ -25,9 +25,23 @@ const amiri = Amiri({
   weight: ["400", "700"],
 });
 
+const siteTitle = `The Wedding of ${wedding.bride.shortName} & ${wedding.groom.shortName}`;
+const siteDescription = `${wedding.dateLabel} · You are invited to celebrate with us.`;
+
 export const metadata: Metadata = {
-  title: `The Wedding of ${wedding.bride.shortName} & ${wedding.groom.shortName}`,
-  description: `${wedding.dateLabel} · You are invited to celebrate with us.`,
+  metadataBase: new URL(wedding.siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  applicationName: siteTitle,
+  // Link previews (WhatsApp etc.); the picture comes from opengraph-image.tsx.
+  openGraph: {
+    type: "website",
+    siteName: siteTitle,
+    title: siteTitle,
+    description: siteDescription,
+    locale: "id_ID",
+  },
+  twitter: { card: "summary_large_image", title: siteTitle, description: siteDescription },
 };
 
 // Colours the phone's browser bar to match the invitation instead of white.
