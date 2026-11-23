@@ -7,9 +7,12 @@ import { Toast } from "./toast";
 export function WishForm({
   action,
   guestName,
+  askName = false,
 }: {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   guestName: string;
+  // Shared family links: the visitor types their own name.
+  askName?: boolean;
 }) {
   const [state, formAction, pending] = useActionState(action, null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -20,9 +23,21 @@ export function WishForm({
 
   return (
     <form ref={formRef} action={formAction} className="space-y-3 text-left">
-      <p className="text-sm text-ink/70">
-        Posting as <strong className="text-brown">{guestName}</strong>
-      </p>
+      {askName ? (
+        <input
+          name="name"
+          required
+          maxLength={60}
+          autoComplete="name"
+          placeholder="Your name"
+          aria-label="Your name"
+          className="w-full rounded-xl border border-maroon/20 bg-white/80 px-4 py-3 text-base text-ink placeholder:text-ink/40 focus:border-gold focus:outline-none"
+        />
+      ) : (
+        <p className="text-sm text-ink/70">
+          Posting as <strong className="text-brown">{guestName}</strong>
+        </p>
+      )}
       <textarea
         name="message"
         required

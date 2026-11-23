@@ -33,12 +33,15 @@ export function InvitationShell({
   guestName,
   coupleNames,
   note,
+  noRsvp = false,
   children,
 }: {
   guestName: string;
   coupleNames: string;
   // What this invitation covers, e.g. "Invited to the Akad Nikah".
   note?: string;
+  // Shared family links: no RSVP button in the bottom menu.
+  noRsvp?: boolean;
   children: React.ReactNode;
 }) {
   const [stage, setStage] = useState<Stage>("closed");
@@ -154,7 +157,7 @@ export function InvitationShell({
         </div>
       )}
       {children}
-      {stage !== "closed" && <BottomNav />}
+      {stage !== "closed" && <BottomNav noRsvp={noRsvp} />}
       {stage !== "closed" && hasSound && <SoundButton muted={muted} onToggle={toggleSound} />}
     </>
   );

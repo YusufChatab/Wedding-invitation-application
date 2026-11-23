@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { addWish, submitRsvp } from "@/lib/data";
+import { addOpenWish, addWish, submitRsvp } from "@/lib/data";
 
 // `id` is unique per submission so the pop-up message replays every time.
 export type FormState = { ok: boolean; message: string; id: string } | null;
@@ -35,8 +35,13 @@ export async function wishAction(slug: string, _prev: FormState, formData: FormD
   const message = String(formData.get("message") ?? "").trim();
   if (!message) return result(false, "Please write a message.");
   if (message.length > 500) return result(false, "Please keep it under 500 characters.");
+  // Only the shared family links have a name box.
+  const name = formData.has("name") ? String(formData.get("name")).trim() : null;
+  if (name !== null && !name) return result(false, "Please type your name.");
+  if (name !== null && name.length > 60) return result(false, "Please keep your name under 60 characters.");
   try {
-    await addWish(slug, message);
+    if (name !== null) await addOpenWish(slug, name, message);
+    else await addWish(slug, message);
   } catch (e) {
     // Supabase errors are plain objects, not Error instances.
     const tooMany = String((e as { message?: unknown })?.message ?? "").includes("too many");

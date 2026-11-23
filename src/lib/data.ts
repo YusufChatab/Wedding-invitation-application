@@ -11,6 +11,8 @@ export type Invitation = {
   attending: boolean | null;
   // How many said they're coming (0 when not attending).
   guestCount: number;
+  // A shared family link (Keluarga Besar): no RSVP, visitors sign wishes with their own name.
+  isOpen: boolean;
 };
 
 export type Wish = {
@@ -60,6 +62,7 @@ export async function getInvitation(slug: string): Promise<Invitation | null> {
     events: toAccess(row.events),
     attending: row.attending,
     guestCount: row.guest_count ?? 0,
+    isOpen: row.is_open === true,
   };
 }
 
@@ -84,6 +87,12 @@ export async function addWish(slug: string, message: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function addOpenWish(slug: string, name: string, message: string): Promise<void> {
+  if (demoEnabled()) return demo.addOpenWish(slug, name, message);
+  const { error } = await db().rpc("add_open_wish", { p_slug: slug, p_name: name, p_message: message });
+  if (error) throw error;
+}
+
 export async function listWishes(): Promise<Wish[]> {
   if (demoEnabled()) return demo.listWishes();
   const { data, error } = await db().rpc("list_wishes", { p_limit: 200 });
@@ -102,7 +111,7 @@ export async function listWishes(): Promise<Wish[]> {
 // so the site can be previewed locally. Data resets on server restart.
 // ---------------------------------------------------------------------------
 
-type DemoGuest = { name: string; maxGuests: number; events: EventAccess; rsvp?: RsvpInput };
+type DemoGuest = { name: string; maxGuests: number; events: EventAccess; isOpen?: boolean; rsvp?: RsvpInput };
 
 const sampleWishes = [
   "Barakallahu lakuma wa baraka 'alaikuma wa jama'a bainakuma fii khair. Congratulations!",
@@ -129,6 +138,13 @@ const demo = (() => {
       },
     ]),
   );
+  guests.set("keluarga-besar-chatab", { name: "Keluarga Besar Chatab", maxGuests: 1, events: "reception", isOpen: true });
+  guests.set("keluarga-besar-umi-syamsyiah", {
+    name: "Keluarga Besar Umi Syamsyiah",
+    maxGuests: 1,
+    events: "reception",
+    isOpen: true,
+  });
   const wishes: Wish[] = [...guests.values()].slice(1, 1 + sampleWishes.length).map((g, i) => ({
     id: `w${i}`,
     name: g.name,
@@ -147,6 +163,7 @@ const demo = (() => {
         events: g.events,
         attending: g.rsvp?.attending ?? null,
         guestCount: g.rsvp?.guests ?? 0,
+        isOpen: g.isOpen === true,
       };
     },
     async submitRsvp(slug: string, input: RsvpInput) {
@@ -166,6 +183,10 @@ const demo = (() => {
         attending: g.rsvp?.attending ?? null,
         createdAt: new Date().toISOString(),
       });
+    },
+    async addOpenWish(slug: string, name: string, message: string) {
+      if (!guests.get(slug)?.isOpen) throw new Error("invitation not found");
+      wishes.unshift({ id: crypto.randomUUID(), name, message, attending: null, createdAt: new Date().toISOString() });
     },
     async listWishes() {
       return [...wishes];

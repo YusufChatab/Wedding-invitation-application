@@ -51,6 +51,7 @@ export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
       guestName={invitation.name}
       coupleNames={couple}
       note={`Invited to the ${eventsLabel(invitation.events)}`}
+      noRsvp={invitation.isOpen}
     >
       <main className="overflow-x-hidden bg-cream">
         <Hero />
@@ -59,20 +60,23 @@ export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
         <Events access={invitation.events} />
         <SaveTheDate access={invitation.events} />
 
-        <Section id="rsvp" dark title="RSVP" subtitle="Kindly let us know if you can join us">
-          <RsvpForm
-            action={rsvpAction.bind(null, slug)}
-            guestName={invitation.name}
-            eventsLabel={eventsLabel(invitation.events)}
-            maxGuests={invitation.maxGuests}
-            current={{ attending: invitation.attending, guestCount: invitation.guestCount }}
-          />
-        </Section>
+        {/* Shared family links have no RSVP. */}
+        {!invitation.isOpen && (
+          <Section id="rsvp" dark title="RSVP" subtitle="Kindly let us know if you can join us">
+            <RsvpForm
+              action={rsvpAction.bind(null, slug)}
+              guestName={invitation.name}
+              eventsLabel={eventsLabel(invitation.events)}
+              maxGuests={invitation.maxGuests}
+              current={{ attending: invitation.attending, guestCount: invitation.guestCount }}
+            />
+          </Section>
+        )}
 
         <Gift />
 
         <Section id="wishes" title="Du'a & Wishes" subtitle="Send your prayers and best wishes to the couple">
-          <WishForm action={wishAction.bind(null, slug)} guestName={invitation.name} />
+          <WishForm action={wishAction.bind(null, slug)} guestName={invitation.name} askName={invitation.isOpen} />
           <WishList wishes={wishes} />
         </Section>
 

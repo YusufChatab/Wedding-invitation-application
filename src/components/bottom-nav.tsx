@@ -12,8 +12,10 @@ const items = [
 ];
 
 // Floating section switcher, mainly for phones.
-export function BottomNav() {
+export function BottomNav({ noRsvp = false }: { noRsvp?: boolean }) {
   const [active, setActive] = useState("home");
+  // The shared family links have no RSVP section.
+  const shown = noRsvp ? items.filter((i) => i.id !== "rsvp") : items;
 
   useEffect(() => {
     const io = new IntersectionObserver(
@@ -34,7 +36,7 @@ export function BottomNav() {
       aria-label="Sections"
       className="pop-in fixed inset-x-0 bottom-3 z-40 mx-auto flex w-[calc(100%-1.5rem)] max-w-md justify-around rounded-full border border-gold/40 bg-maroon-deep/85 px-2 py-1.5 shadow-xl shadow-black/30 backdrop-blur-md [animation-delay:0.9s]"
     >
-      {items.map((item) => {
+      {shown.map((item) => {
         const isActive = active === item.id;
         return (
           <a
