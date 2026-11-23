@@ -13,6 +13,8 @@ export type Invitation = {
   guestCount: number;
   // A shared family link (Keluarga Besar): no RSVP, visitors sign wishes with their own name.
   isOpen: boolean;
+  // False for family guests marked "NA" in the Excel: just attending or not, no number of guests.
+  askCount: boolean;
 };
 
 export type Wish = {
@@ -63,6 +65,7 @@ export async function getInvitation(slug: string): Promise<Invitation | null> {
     attending: row.attending,
     guestCount: row.guest_count ?? 0,
     isOpen: row.is_open === true,
+    askCount: row.ask_count !== false,
   };
 }
 
@@ -111,7 +114,14 @@ export async function listWishes(): Promise<Wish[]> {
 // so the site can be previewed locally. Data resets on server restart.
 // ---------------------------------------------------------------------------
 
-type DemoGuest = { name: string; maxGuests: number; events: EventAccess; isOpen?: boolean; rsvp?: RsvpInput };
+type DemoGuest = {
+  name: string;
+  maxGuests: number;
+  events: EventAccess;
+  isOpen?: boolean;
+  askCount?: boolean;
+  rsvp?: RsvpInput;
+};
 
 const sampleWishes = [
   "Barakallahu lakuma wa baraka 'alaikuma wa jama'a bainakuma fii khair. Congratulations!",
@@ -145,6 +155,7 @@ const demo = (() => {
     events: "reception",
     isOpen: true,
   });
+  guests.set("test-family-na", { name: "Test Family NA", maxGuests: 1, events: "reception", askCount: false });
   const wishes: Wish[] = [...guests.values()].slice(1, 1 + sampleWishes.length).map((g, i) => ({
     id: `w${i}`,
     name: g.name,
@@ -164,6 +175,7 @@ const demo = (() => {
         attending: g.rsvp?.attending ?? null,
         guestCount: g.rsvp?.guests ?? 0,
         isOpen: g.isOpen === true,
+        askCount: g.askCount !== false,
       };
     },
     async submitRsvp(slug: string, input: RsvpInput) {

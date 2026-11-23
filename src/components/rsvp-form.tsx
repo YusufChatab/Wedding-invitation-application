@@ -14,6 +14,8 @@ type Props = {
   eventsLabel: string;
   // How many people the invitation is for; above 1 the guest picks how many are coming.
   maxGuests: number;
+  // False for family guests with no seat limit: only "attending or not".
+  askCount: boolean;
   current: Current;
 };
 
@@ -25,7 +27,7 @@ const card =
 const choice =
   "flex-1 cursor-pointer rounded-xl border border-gold/40 bg-maroon-deep/40 px-4 py-3 text-center transition has-[:checked]:border-gold has-[:checked]:bg-gold has-[:checked]:text-maroon-deep has-[:checked]:font-semibold";
 
-export function RsvpForm({ action, guestName, eventsLabel, maxGuests, current }: Props) {
+export function RsvpForm({ action, guestName, eventsLabel, maxGuests, askCount, current }: Props) {
   const [state, formAction, pending] = useActionState(action, null);
   const [attending, setAttending] = useState<"yes" | "no" | null>(
     current.attending === null ? null : current.attending ? "yes" : "no",
@@ -75,14 +77,14 @@ export function RsvpForm({ action, guestName, eventsLabel, maxGuests, current }:
             </div>
           </fieldset>
 
-          {maxGuests === 1 && attending === "yes" && (
+          {askCount && maxGuests === 1 && attending === "yes" && (
             <div className="pop-in">
               <label className="mb-1 block text-sm text-cream/70">Number of guests</label>
               <div className="rounded-xl border border-gold/30 bg-maroon-deep/50 px-4 py-3 text-lg">1 guest</div>
             </div>
           )}
 
-          {maxGuests > 1 && attending === "yes" && (
+          {askCount && maxGuests > 1 && attending === "yes" && (
             <fieldset className="pop-in">
               <legend className="mb-2 text-sm text-cream/70">How many of you will attend?</legend>
               <div className="flex flex-wrap gap-3">

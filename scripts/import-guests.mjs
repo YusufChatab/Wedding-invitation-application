@@ -152,10 +152,13 @@ for (const sheet of workbook.worksheets) {
     if (!name) return;
 
     let maxGuests = 1;
+    // "NA": family with no seat limit, so the RSVP only asks whether they're coming.
+    let askCount = true;
     if (cols.pax) {
       const raw = cellText(row.getCell(cols.pax));
       const n = Number.parseInt(raw, 10);
       if (n >= 1) maxGuests = Math.min(n, 20);
+      else if (/^n\/?a$/i.test(raw)) askCount = false;
       else notes.push(`${side} row ${rowNumber} "${name}": pax "${raw}" is not a number, using 1.`);
     }
 
@@ -178,6 +181,7 @@ for (const sheet of workbook.worksheets) {
       events: cols.event ? eventAccess(cellText(row.getCell(cols.event))) : "both",
       max_guests: maxGuests,
       plus_one_allowed: maxGuests > 1,
+      ask_count: askCount,
       phone: cols.phone ? cellText(row.getCell(cols.phone)) || null : null,
     });
   });
@@ -217,7 +221,7 @@ const csv = (s) => `"${String(s ?? "").replace(/"/g, '""')}"`;
 const eventLabel = { both: "Akad & Resepsi", akad: "Akad", reception: "Resepsi" };
 const lines = ["Guest of,Name,Event,Pax,Phone,Link"].concat(
   guests.map((g) =>
-    [g.side, g.name, eventLabel[g.events], g.max_guests, g.phone, `${siteUrl}/${g.slug}`].map(csv).join(","),
+    [g.side, g.name, eventLabel[g.events], g.ask_count ? g.max_guests : "NA", g.phone, `${siteUrl}/${g.slug}`].map(csv).join(","),
   ),
 );
 writeFileSync("guest-links.csv", "﻿" + lines.join("\n"));
@@ -310,7 +314,7 @@ async function writeWorkbook(path) {
         side: g.side,
         name: g.name,
         event: eventLabel[g.events],
-        pax: g.max_guests,
+        pax: g.ask_count ? g.max_guests : "NA",
         link: { text: url(g), hyperlink: url(g) },
         ...(withMessage ? { wa: { text: "Open in WhatsApp", hyperlink: wa }, message } : {}),
       });

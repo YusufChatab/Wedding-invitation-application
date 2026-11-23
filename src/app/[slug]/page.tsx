@@ -68,6 +68,7 @@ export default async function InvitationPage({ params }: PageProps<"/[slug]">) {
               guestName={invitation.name}
               eventsLabel={eventsLabel(invitation.events)}
               maxGuests={invitation.maxGuests}
+              askCount={invitation.askCount}
               current={{ attending: invitation.attending, guestCount: invitation.guestCount }}
             />
           </Section>
