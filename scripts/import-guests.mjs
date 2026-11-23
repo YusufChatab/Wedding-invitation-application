@@ -4,6 +4,8 @@
 // Usage:
 //   npm run import-guests -- guests.xlsx            (writes to Supabase)
 //   npm run import-guests -- guests.xlsx --dry-run  (only writes guest-links.csv)
+//   add --messages=Raziq (or Farah,Raziq) to put a ready-to-send WhatsApp
+//   message for each guest of those sides in guest-links.xlsx
 //
 // Every sheet is read; the sheet name is saved as whose guest it is (e.g. a
 // "Farah" sheet and a "Raziq" sheet). Columns (header row; case-insensitive):
@@ -38,6 +40,26 @@ if (existsSync(".env.local")) {
 const args = process.argv.slice(2);
 const file = args.find((a) => !a.startsWith("--"));
 const dryRun = args.includes("--dry-run");
+const messageSides = new Set(
+  (args.find((a) => a.startsWith("--messages="))?.split("=")[1] ?? "").split(",").map((x) => x.trim().toLowerCase()).filter(Boolean),
+);
+
+// The WhatsApp invitation text (*…* shows as bold in WhatsApp).
+const inviteMessage = (name, link) =>
+  [
+    "Assalamu'alaikum Warahmatullahi Wabarakatuh",
+    "",
+    `Kepada Yth. *${name}*,`,
+    "",
+    "Dengan memohon rahmat dan ridha Allah Subhanahu Wa Ta'ala, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir di hari bahagia kami, *Farah & Raziq*.",
+    "",
+    "Informasi lengkap dan konfirmasi kehadiran dapat dilihat melalui tautan berikut:",
+    link,
+    "",
+    "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila berkenan hadir dan memberikan doa restu.",
+    "",
+    "Wassalamu'alaikum Warahmatullahi Wabarakatuh",
+  ].join("\n");
 const siteUrl = (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 
 if (!file) {
@@ -264,7 +286,7 @@ async function writeWorkbook(path) {
   }
 
   // Guest sheets
-  const addGuestSheet = (title, list, withSide) => {
+  const addGuestSheet = (title, list, withSide, withMessage = false) => {
     const ws = wb.addWorksheet(title, { views: [{ state: "frozen", ySplit: 1 }] });
     ws.columns = [
       { header: "No", key: "no", width: 6 },
@@ -273,8 +295,16 @@ async function writeWorkbook(path) {
       { header: "Event", key: "event", width: 17 },
       { header: "Pax", key: "pax", width: 7 },
       { header: "Link", key: "link", width: 62 },
+      ...(withMessage
+        ? [
+            { header: "Send on WhatsApp", key: "wa", width: 20 },
+            { header: "Message", key: "message", width: 70 },
+          ]
+        : []),
     ];
     list.forEach((g, i) => {
+      const message = withMessage ? inviteMessage(g.name, url(g)) : "";
+      const wa = `https://wa.me/?text=${encodeURIComponent(message)}`;
       const row = ws.addRow({
         no: i + 1,
         side: g.side,
@@ -282,6 +312,7 @@ async function writeWorkbook(path) {
         event: eventLabel[g.events],
         pax: g.max_guests,
         link: { text: url(g), hyperlink: url(g) },
+        ...(withMessage ? { wa: { text: "Open in WhatsApp", hyperlink: wa }, message } : {}),
       });
       row.eachCell((c) => {
         c.border = border;
@@ -294,6 +325,13 @@ async function writeWorkbook(path) {
       row.getCell("no").alignment = { horizontal: "center" };
       row.getCell("pax").alignment = { horizontal: "center" };
       row.getCell("link").font = { color: { argb: "FF1155CC" }, underline: true };
+      if (withMessage) {
+        row.getCell("wa").font = { color: { argb: "FF128C7E" }, underline: true, bold: true };
+        row.getCell("wa").alignment = { horizontal: "center", vertical: "middle" };
+        // Whole message in one cell; wrapped, with the row tall enough to read it.
+        row.getCell("message").alignment = { wrapText: true, vertical: "top" };
+        row.height = 210;
+      }
     });
     const header = ws.getRow(1);
     header.height = 22;
@@ -312,7 +350,7 @@ async function writeWorkbook(path) {
     total.font = { bold: true, color: { argb: wine } };
     total.getCell("pax").alignment = { horizontal: "center" };
   };
-  for (const side of sides) addGuestSheet(side, guests.filter((g) => g.side === side), false);
+  for (const side of sides) addGuestSheet(side, guests.filter((g) => g.side === side), false, messageSides.has(side.toLowerCase()));
   addGuestSheet("All guests", guests, true);
 
   await wb.xlsx.writeFile(path);
